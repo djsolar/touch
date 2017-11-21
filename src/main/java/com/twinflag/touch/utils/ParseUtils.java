@@ -131,7 +131,6 @@ public class ParseUtils {
         return null;
     }
 
-
     private int getType(String path) {
         if (path.endsWith(SourceType.TEXT.getSuffix())) {
             return SourceType.TEXT.getType();

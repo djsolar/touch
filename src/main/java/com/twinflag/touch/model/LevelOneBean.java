@@ -8,15 +8,15 @@ public class LevelOneBean {
 
     private String normalPic;
 
+    private String selectedPic;
+
     private String url;
 
     private Integer programId;
 
-    private String levelOneHtml;
+    private Integer levelOrder;
 
-    private String levelOneXml;
-
-    private Integer order;
+    private Integer updateUserId;
 
     private Date updateTime;
 
@@ -52,28 +52,28 @@ public class LevelOneBean {
         this.programId = programId;
     }
 
-    public String getLevelOneHtml() {
-        return levelOneHtml;
+    public String getSelectePic() {
+        return selectedPic;
     }
 
-    public void setLevelOneHtml(String levelOneHtml) {
-        this.levelOneHtml = levelOneHtml;
+    public void setSelectePic(String selectePic) {
+        this.selectedPic = selectePic;
     }
 
-    public String getLevelOneXml() {
-        return levelOneXml;
+    public Integer getLevelOrder() {
+        return levelOrder;
     }
 
-    public void setLevelOneXml(String levelOneXml) {
-        this.levelOneXml = levelOneXml;
+    public void setLevelOrder(Integer levelOrder) {
+        this.levelOrder = levelOrder;
     }
 
-    public Integer getOrder() {
-        return order;
+    public Integer getUpdateUserId() {
+        return updateUserId;
     }
 
-    public void setOrder(Integer order) {
-        this.order = order;
+    public void setUpdateUserId(Integer updateUserId) {
+        this.updateUserId = updateUserId;
     }
 
     public Date getUpdateTime() {
