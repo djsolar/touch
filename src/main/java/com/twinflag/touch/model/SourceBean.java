@@ -1,11 +1,19 @@
 package com.twinflag.touch.model;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "t_source")
 public class SourceBean {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    @Column(name = "absolute_path")
     private String absolutePath;
 
+    @Column(name = "relative_path")
     private String relativePath;
 
     public Integer getId() {

@@ -1,28 +1,50 @@
 package com.twinflag.touch.model;
 
+import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
+@Entity
+@Table(name = "t_program")
 public class ProgramBean {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    @Column(name = "program_name")
     private String programName;
 
+    @Column(name = "program_xml")
     private String programXml;
 
+    @Column(name = "zip_path")
     private String zipPath;
 
+    @Column(name = "source_path")
     private String sourcePath;
 
     private int type;
 
+    @ManyToOne
+    @JoinColumn(name = "create_user")
     private UserBean createUser;
 
+    @ManyToOne
+    @JoinColumn(name = "update_user")
     private UserBean updateUser;
 
+    @Column(name = "updatetime")
     private Date updateTime;
 
-    private ProgramBean template;
+    @Column(name = "template_id")
+    private Integer templateId;
+
+    @Column(name = "createtime")
+    private Date createTime;
+
+    @OneToMany(mappedBy = "program")
+    private Set<LevelOneBean> levelOnes;
 
     public Integer getId() {
         return id;
@@ -96,11 +118,27 @@ public class ProgramBean {
         this.updateTime = updateTime;
     }
 
-    public ProgramBean getTemplate() {
-        return template;
+    public Integer getTemplateId() {
+        return templateId;
     }
 
-    public void setTemplate(ProgramBean template) {
-        this.template = template;
+    public void setTemplateId(Integer templateId) {
+        this.templateId = templateId;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Set<LevelOneBean> getLevelOnes() {
+        return levelOnes;
+    }
+
+    public void setLevelOnes(Set<LevelOneBean> levelOnes) {
+        this.levelOnes = levelOnes;
     }
 }

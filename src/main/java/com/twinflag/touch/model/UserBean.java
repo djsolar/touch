@@ -1,9 +1,15 @@
 package com.twinflag.touch.model;
 
+import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
+@Entity
+@Table(name = "t_user")
 public class UserBean {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
     private String username;
@@ -12,7 +18,16 @@ public class UserBean {
 
     private String email;
 
+    @Column(name = "last_login_time")
     private Date lastLoginTime;
+
+    @Column(name = "createtime")
+    private Date createTime;
+
+    @ManyToMany
+    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<RoleBean> roles;
 
     public Integer getId() {
         return id;
@@ -52,5 +67,33 @@ public class UserBean {
 
     public void setLastLoginTime(Date lastLoginTime) {
         this.lastLoginTime = lastLoginTime;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Set<RoleBean> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<RoleBean> roles) {
+        this.roles = roles;
+    }
+
+    @Override
+    public String toString() {
+        return "UserBean{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", lastLoginTime=" + lastLoginTime +
+                ", createTime=" + createTime +
+                '}';
     }
 }

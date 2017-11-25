@@ -1,24 +1,48 @@
 package com.twinflag.touch.model;
 
+import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
+@Entity
+@Table(name = "t_level_one")
 public class LevelOneBean {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    @Column(name = "normal_pic")
     private String normalPic;
 
+    @Column(name = "selected_pic")
     private String selectedPic;
 
     private String url;
 
-    private Integer programId;
+    @ManyToOne
+    @JoinColumn(name = "program_id")
+    private ProgramBean program;
 
+    @Column(name = "level_order")
     private Integer levelOrder;
 
-    private Integer updateUserId;
+    @ManyToOne
+    @JoinColumn(name = "update_user")
+    private UserBean updateUser;
 
+    @ManyToOne
+    @JoinColumn(name = "create_user")
+    private UserBean createUser;
+
+    @Column(name = "updatetime")
     private Date updateTime;
+
+    @Column(name = "createtime")
+    private Date createTime;
+
+    @OneToMany(mappedBy = "levelOne")
+    private Set<LevelTwoBean> levelTwos;
 
     public Integer getId() {
         return id;
@@ -44,12 +68,12 @@ public class LevelOneBean {
         this.url = url;
     }
 
-    public Integer getProgramId() {
-        return programId;
+    public ProgramBean getProgram() {
+        return program;
     }
 
-    public void setProgramId(Integer programId) {
-        this.programId = programId;
+    public void setProgram(ProgramBean program) {
+        this.program = program;
     }
 
     public String getSelectePic() {
@@ -68,12 +92,20 @@ public class LevelOneBean {
         this.levelOrder = levelOrder;
     }
 
-    public Integer getUpdateUserId() {
-        return updateUserId;
+    public UserBean getUpdateUser() {
+        return updateUser;
     }
 
-    public void setUpdateUserId(Integer updateUserId) {
-        this.updateUserId = updateUserId;
+    public void setUpdateUser(UserBean updateUser) {
+        this.updateUser = updateUser;
+    }
+
+    public UserBean getCreateUser() {
+        return createUser;
+    }
+
+    public void setCreateUser(UserBean createUser) {
+        this.createUser = createUser;
     }
 
     public Date getUpdateTime() {
@@ -82,5 +114,29 @@ public class LevelOneBean {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getSelectedPic() {
+        return selectedPic;
+    }
+
+    public void setSelectedPic(String selectedPic) {
+        this.selectedPic = selectedPic;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Set<LevelTwoBean> getLevelTwos() {
+        return levelTwos;
+    }
+
+    public void setLevelTwos(Set<LevelTwoBean> levelTwos) {
+        this.levelTwos = levelTwos;
     }
 }
