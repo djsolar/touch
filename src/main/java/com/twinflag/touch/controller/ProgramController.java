@@ -7,16 +7,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class ProgramController {
 
-    @RequestMapping("/login")
-    @ResponseBody
-    public String login() {
-        return "login";
-    }
-
-    @RequestMapping("/hello")
-    @ResponseBody
-    public String hello() {
-        return "Hello";
+    @RequestMapping("/program")
+    public String program() {
+        return "program";
     }
 
     @RequestMapping("/hi")

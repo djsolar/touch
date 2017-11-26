@@ -1,7 +1,7 @@
 package com.twinflag.touch.respository;
 
-import com.twinflag.touch.model.ContentBean;
+import com.twinflag.touch.model.Content;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ContentRepository extends JpaRepository<ContentBean, Integer>{
+public interface ContentRepository extends JpaRepository<Content, Integer>{
 }

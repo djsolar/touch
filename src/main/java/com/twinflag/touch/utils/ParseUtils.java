@@ -1,8 +1,8 @@
 package com.twinflag.touch.utils;
 
-import com.twinflag.touch.entity.Content;
-import com.twinflag.touch.entity.LevelOneContent;
-import com.twinflag.touch.entity.LevelTwoContent;
+import com.twinflag.touch.entity.ContentBean;
+import com.twinflag.touch.entity.LevelOneBean;
+import com.twinflag.touch.entity.LevelTwoBean;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -13,108 +13,108 @@ import java.util.List;
 
 public class ParseUtils {
 
-    public List<LevelOneContent> parseMenu(String path) throws DocumentException {
+    public List<LevelOneBean> parseMenu(String path) throws DocumentException {
         SAXReader saxReader = new SAXReader();
         Document document = saxReader.read(path);
         Element root = document.getRootElement();
 
-        List<LevelOneContent> levelOneContents = new ArrayList<>();
+        List<LevelOneBean> levelOneBeans = new ArrayList<>();
         List<Element> levelOneElements = root.elements("level-1");
         for(Element element : levelOneElements) {
-            levelOneContents.add(parseLevelOne(element));
+            levelOneBeans.add(parseLevelOne(element));
         }
-        return levelOneContents;
+        return levelOneBeans;
     }
 
-    private LevelOneContent parseLevelOne(Element node) {
-        LevelOneContent levelOneContent = new LevelOneContent();
+    private LevelOneBean parseLevelOne(Element node) {
+        LevelOneBean levelOneBean = new LevelOneBean();
         String normalPic = node.attributeValue("iconurl_a");
         String selectedPic = node.attributeValue("iconurl_b");
         String url = node.attributeValue("url");
-        levelOneContent.setNormalPic(normalPic);
-        levelOneContent.setSelectedPic(selectedPic);
-        levelOneContent.setUrl(url);
+        levelOneBean.setNormalPic(normalPic);
+        levelOneBean.setSelectedPic(selectedPic);
+        levelOneBean.setUrl(url);
 
         List<Element> elements = node.elements("level-2");
-        List<LevelTwoContent> levelTwoContents = new ArrayList<>();
+        List<LevelTwoBean> levelTwoBeans = new ArrayList<>();
         for(Element element : elements) {
-            LevelTwoContent levelTwoContent = parseLevelTwo(element);
-            levelTwoContents.add(levelTwoContent);
+            LevelTwoBean levelTwoBean = parseLevelTwo(element);
+            levelTwoBeans.add(levelTwoBean);
         }
-        levelOneContent.setTwoContent(levelTwoContents);
-        return levelOneContent;
+        levelOneBean.setTwoContent(levelTwoBeans);
+        return levelOneBean;
     }
 
-    private LevelTwoContent parseLevelTwo(Element node) {
-        LevelTwoContent levelTwoContent = new LevelTwoContent();
+    private LevelTwoBean parseLevelTwo(Element node) {
+        LevelTwoBean levelTwoBean = new LevelTwoBean();
         String label = node.attributeValue("label");
         boolean isMany = Boolean.parseBoolean(node.attributeValue("ismany"));
-        levelTwoContent.setLabel(label);
-        levelTwoContent.setMany(isMany);
+        levelTwoBean.setLabel(label);
+        levelTwoBean.setMany(isMany);
 
         List<Element> elements = node.elements("content");
         if (elements == null || elements.size() == 0) {
             String url = node.attributeValue("url");
             if (url != null) {
-                levelTwoContent.setUrl(url);
+                levelTwoBean.setUrl(url);
             }
             String title = node.attributeValue("title");
             if (title != null) {
-                levelTwoContent.setTitle(title);
+                levelTwoBean.setTitle(title);
             }
         } else {
-            List<Content> contents = new ArrayList<>();
+            List<ContentBean> contentBeans = new ArrayList<>();
             for(Element element : elements) {
-                Content content = parseContent(element);
-                if (content == null)
+                ContentBean contentBean = parseContent(element);
+                if (contentBean == null)
                     continue;
-                contents.add(content);
+                contentBeans.add(contentBean);
             }
-            levelTwoContent.setContents(contents);
+            levelTwoBean.setContentBeans(contentBeans);
         }
-        return levelTwoContent;
+        return levelTwoBean;
     }
 
-    private Content parseContent(Element node) {
+    private ContentBean parseContent(Element node) {
         String url = node.attributeValue("url");
         String label = node.attributeValue("label");
         String title = node.attributeValue("title");
         if (url != null && label != null && title != null) {
-            Content content = new Content();
-            content.setLabel(label);
-            content.setTitle(title);
+            ContentBean contentBean = new ContentBean();
+            contentBean.setLabel(label);
+            contentBean.setTitle(title);
             List<String> paths = new ArrayList<>();
             paths.add(url);
-            content.setType(getType(url));
-            content.setPaths(paths);
-            return content;
+            contentBean.setType(getType(url));
+            contentBean.setPaths(paths);
+            return contentBean;
         }
         if (url == null) {
-            Content content = new Content();
-            content.setLabel(label);
-            content.setTitle(title);
+            ContentBean contentBean = new ContentBean();
+            contentBean.setLabel(label);
+            contentBean.setTitle(title);
             List<Element> manyPics = node.elements("manypic");
             List<String> paths = getPicPaths(manyPics);
             if (paths != null) {
-                content.setPaths(paths);
-                content.setType(SourceType.IMAGE.getType());
+                contentBean.setPaths(paths);
+                contentBean.setType(SourceType.IMAGE.getType());
             }
             List<Element> manyTxts = node.elements("manytxt");
             paths = getPicPaths(manyTxts);
             if (paths != null) {
-                content.setPaths(paths);
-                content.setType(SourceType.TEXT.getType());
+                contentBean.setPaths(paths);
+                contentBean.setType(SourceType.TEXT.getType());
             }
-            return content;
+            return contentBean;
         }
 
         if (label == null && title == null) {
-            Content content = new Content();
+            ContentBean contentBean = new ContentBean();
             List<String> paths = new ArrayList<>();
             paths.add(url);
-            content.setPaths(paths);
-            content.setType(SourceType.IMAGE.getType());
-            return content;
+            contentBean.setPaths(paths);
+            contentBean.setType(SourceType.IMAGE.getType());
+            return contentBean;
         }
         return null;
     }
@@ -144,10 +144,10 @@ public class ParseUtils {
 
     public static void main(String[] args) throws DocumentException {
         ParseUtils parseUtils = new ParseUtils();
-        List<LevelOneContent> levelOneContents = parseUtils.parseMenu("C:\\Users\\zhouyiran\\IdeaProjects\\touch\\src\\main\\resources\\StreamingAssets\\menu.xml");
-        for(LevelOneContent llc : levelOneContents) {
-            List<LevelTwoContent> levelTwoContents = llc.getTwoContent();
-            System.out.println(levelTwoContents.size());
+        List<LevelOneBean> levelOneBeans = parseUtils.parseMenu("C:\\Users\\zhouyiran\\IdeaProjects\\touch\\src\\main\\resources\\StreamingAssets\\menu.xml");
+        for(LevelOneBean llc : levelOneBeans) {
+            List<LevelTwoBean> levelTwoBeans = llc.getTwoContent();
+            System.out.println(levelTwoBeans.size());
         }
     }
 }
