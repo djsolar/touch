@@ -16,6 +16,10 @@ public class Source {
     @Column(name = "relative_path")
     private String relativePath;
 
+    @ManyToOne
+    @JoinColumn(name = "level_one_id")
+    private Content content;
+
     public Integer getId() {
         return id;
     }
@@ -38,5 +42,13 @@ public class Source {
 
     public void setRelativePath(String relativePath) {
         this.relativePath = relativePath;
+    }
+
+    public Content getContent() {
+        return content;
+    }
+
+    public void setContent(Content content) {
+        this.content = content;
     }
 }

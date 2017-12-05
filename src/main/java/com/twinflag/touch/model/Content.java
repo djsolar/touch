@@ -1,7 +1,12 @@
 package com.twinflag.touch.model;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "t_content")
@@ -13,26 +18,24 @@ public class Content {
 
     private String label;
 
+    private String title;
+
     private int type;
 
-    @Column(name = "level_two_id")
-    private Integer levelTwoId;
+    @ManyToOne
+    @JoinColumn(name = "level_two_id")
+    private LevelTwo levelTwo;
 
     @Column(name = "updatetime")
+    @LastModifiedDate
     private Date updateTime;
 
-    @ManyToOne
-    @JoinColumn(name = "update_user")
-    private User updateUser;
-
-    @ManyToOne
-    @JoinColumn(name = "create_user")
-    private User createUser;
-
-    private String url;
-
     @Column(name = "createtime")
+    @CreatedDate
     private Date createTime;
+
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "content")
+    private List<Source> sources;
 
     public Integer getId() {
         return id;
@@ -58,12 +61,12 @@ public class Content {
         this.type = type;
     }
 
-    public Integer getLevelTwoId() {
-        return levelTwoId;
+    public LevelTwo getLevelTwo() {
+        return levelTwo;
     }
 
-    public void setLevelTwoId(Integer levelTwoId) {
-        this.levelTwoId = levelTwoId;
+    public void setLevelTwo(LevelTwo levelTwo) {
+        this.levelTwo = levelTwo;
     }
 
     public Date getUpdateTime() {
@@ -74,35 +77,27 @@ public class Content {
         this.updateTime = updateTime;
     }
 
-    public User getUpdateUser() {
-        return updateUser;
-    }
-
-    public void setUpdateUser(User updateUser) {
-        this.updateUser = updateUser;
-    }
-
-    public User getCreateUser() {
-        return createUser;
-    }
-
-    public void setCreateUser(User createUser) {
-        this.createUser = createUser;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
     public Date getCreateTime() {
         return createTime;
     }
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public List<Source> getSources() {
+        return sources;
+    }
+
+    public void setSources(List<Source> sources) {
+        this.sources = sources;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

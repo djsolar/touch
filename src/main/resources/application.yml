@@ -8,3 +8,10 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  freemarker:
+    suffix: .html
+  http:
+    multipart:
+      max-file-size: 100Mb
+      max-request-size: 1000Mb
+

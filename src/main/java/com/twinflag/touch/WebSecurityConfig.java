@@ -28,12 +28,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/webjars/**", "/css/**").permitAll()
+                .antMatchers("/webjars/**", "/css/**", "/js/**", "/fonts/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
                 .loginPage("/login")
-                .successForwardUrl("/program")
+                .successForwardUrl("/home")
                 .permitAll()
                 .and()
                 .logout()
@@ -45,10 +45,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configGlobal(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
     }
-
-    /*@Override
-    public void configure(WebSecurity web) throws Exception {
-        //解决静态资源被拦截的问题
-        web.ignoring().antMatchers("/global/**");
-    }*/
 }

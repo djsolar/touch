@@ -1,5 +1,10 @@
 package com.twinflag.touch.model;
 
+import org.hibernate.annotations.Type;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.repository.Modifying;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;
@@ -27,21 +32,15 @@ public class LevelOne {
     @Column(name = "level_order")
     private Integer levelOrder;
 
-    @ManyToOne
-    @JoinColumn(name = "update_user")
-    private User updateUser;
-
-    @ManyToOne
-    @JoinColumn(name = "create_user")
-    private User createUser;
-
     @Column(name = "updatetime")
+    @LastModifiedDate
     private Date updateTime;
 
     @Column(name = "createtime")
+    @CreatedDate
     private Date createTime;
 
-    @OneToMany(mappedBy = "levelOne")
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "levelOne")
     private Set<LevelTwo> levelTwos;
 
     public Integer getId() {
@@ -76,36 +75,12 @@ public class LevelOne {
         this.program = program;
     }
 
-    public String getSelectePic() {
-        return selectedPic;
-    }
-
-    public void setSelectePic(String selectePic) {
-        this.selectedPic = selectePic;
-    }
-
     public Integer getLevelOrder() {
         return levelOrder;
     }
 
     public void setLevelOrder(Integer levelOrder) {
         this.levelOrder = levelOrder;
-    }
-
-    public User getUpdateUser() {
-        return updateUser;
-    }
-
-    public void setUpdateUser(User updateUser) {
-        this.updateUser = updateUser;
-    }
-
-    public User getCreateUser() {
-        return createUser;
-    }
-
-    public void setCreateUser(User createUser) {
-        this.createUser = createUser;
     }
 
     public Date getUpdateTime() {

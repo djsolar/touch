@@ -4,15 +4,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
+@RequestMapping("/terminal")
 public class TerminalController {
 
     @RequestMapping("/terminalManage")
     public String terminalManage() {
-        return "terminal_manage";
+        return "terminalManage";
     }
 
     @RequestMapping("/terminalStatus")
     public String terminalStatus() {
-        return "terminal_status";
+        return "terminalStatus";
     }
 }

@@ -19,6 +19,11 @@ public class UserController {
         return "login";
     }
 
+    @RequestMapping("/home")
+    public String home() {
+        return "redirect:/program/getPrograms";
+    }
+
     @RequestMapping("/logout")
     public String logout() {
         return "login";

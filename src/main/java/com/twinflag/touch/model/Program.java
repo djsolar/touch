@@ -1,22 +1,28 @@
 package com.twinflag.touch.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
+
 import javax.persistence.*;
+import java.io.DataOutput;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
 @Entity
 @Table(name = "t_program")
-public class Program {
+public class Program implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonView(DataTablesOutput.View.class)
     private Integer id;
 
     @Column(name = "program_name")
+    @JsonView(DataTablesOutput.View.class)
     private String programName;
-
-    @Column(name = "program_xml")
-    private String programXml;
 
     @Column(name = "zip_path")
     private String zipPath;
@@ -24,10 +30,12 @@ public class Program {
     @Column(name = "source_path")
     private String sourcePath;
 
+    @JsonView(DataTablesOutput.View.class)
     private int type;
 
     @ManyToOne
     @JoinColumn(name = "create_user")
+    @JsonView(DataTablesOutput.View.class)
     private User createUser;
 
     @ManyToOne
@@ -35,15 +43,18 @@ public class Program {
     private User updateUser;
 
     @Column(name = "updatetime")
+    @LastModifiedDate
+    @JsonView(DataTablesOutput.View.class)
     private Date updateTime;
 
     @Column(name = "template_id")
     private Integer templateId;
 
     @Column(name = "createtime")
+    @CreatedDate
     private Date createTime;
 
-    @OneToMany(mappedBy = "program")
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "program")
     private Set<LevelOne> levelOnes;
 
     public Integer getId() {
@@ -60,14 +71,6 @@ public class Program {
 
     public void setProgramName(String programName) {
         this.programName = programName;
-    }
-
-    public String getProgramXml() {
-        return programXml;
-    }
-
-    public void setProgramXml(String programXml) {
-        this.programXml = programXml;
     }
 
     public String getZipPath() {
