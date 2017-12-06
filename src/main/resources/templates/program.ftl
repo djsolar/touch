@@ -24,7 +24,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="index.html">法院管理系统</a>
+            <a class="navbar-brand" href="index.ftl">法院管理系统</a>
         </div>
 
         <div class="page-info">
@@ -88,20 +88,6 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <!--<tr class="odd gradeX">
-                                        <td class="col-md-1">Trident</td>
-                                        <td class="col-md-2">Internet Explorer 4.0</td>
-                                        <td>Win 95+</td>
-                                        <td class="center">4</td>
-                                        <td class="center">X</td>
-                                        <td>
-                                            <div class="btn-operation">
-                                                <button type="button" class="btn btn-primary btn-sm">发布</button>
-                                                <button type="button" class="btn btn-info btn-sm">编辑</button>
-                                                <button type="button" class="btn btn-danger btn-sm">删除</button>
-                                            </div>
-                                        </td>
-                                    </tr>-->
                                     </tbody>
                                 </table>
                             </div>
@@ -135,7 +121,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">取消
                     </button>
-                    <button type="button" class="btn btn-primary">
+                    <button id="createProgram" type="button" class="btn btn-primary" onclick="createNewProgram()">
                         确定
                     </button>
                 </div>
@@ -156,6 +142,7 @@
 <script src="../js/bootstrap-treeview.js" type="text/javascript"></script>
 <script>
     $(document).ready(function () {
+
         var table;
         Date.prototype.Format = function (fmt) { //author: meizz
             var o = {
@@ -241,6 +228,12 @@
             ]
         });
     });
+
+    function createNewProgram() {
+        var templateId = $("#template").val();
+        console.log(templateId);
+        window.location.href = "/program/createProgram/" + templateId;
+    }
 </script>
 </body>
 </html>

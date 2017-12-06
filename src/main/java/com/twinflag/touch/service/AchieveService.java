@@ -9,4 +9,6 @@ public interface AchieveService {
     boolean saveAchieve(Achieve achieve);
 
     List<Achieve> findAll();
+
+    boolean deleteAchieve(Integer id);
 }

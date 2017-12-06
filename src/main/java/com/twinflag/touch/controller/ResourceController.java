@@ -39,4 +39,10 @@ public class ResourceController {
         achieveService.saveAchieve(achieve);
         return true;
     }
+
+    @RequestMapping(value = "/deleteAchieve", method = RequestMethod.POST)
+    @ResponseBody
+    public boolean deleteAchieve(Integer id) {
+        return achieveService.deleteAchieve(id);
+    }
 }

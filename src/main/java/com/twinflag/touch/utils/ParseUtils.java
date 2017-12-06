@@ -140,14 +140,4 @@ public class ParseUtils {
         }
         return SourceType.NONE.getType();
     }
-
-
-    public static void main(String[] args) throws DocumentException {
-        ParseUtils parseUtils = new ParseUtils();
-        List<LevelOneBean> levelOneBeans = parseUtils.parseMenu("C:\\Users\\zhouyiran\\IdeaProjects\\touch\\src\\main\\resources\\StreamingAssets\\menu.xml");
-        for(LevelOneBean llc : levelOneBeans) {
-            List<LevelTwoBean> levelTwoBeans = llc.getTwoContent();
-            System.out.println(levelTwoBeans.size());
-        }
-    }
 }

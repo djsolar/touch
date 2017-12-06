@@ -103,7 +103,7 @@ public class TemplateServiceImpl implements TemplateService {
         User user = userRepository.findByUsername(userDetails.getUsername());
         program.setCreateUser(user);
         program.setUpdateUser(user);
-        Set<LevelOne> levelOnes = new HashSet<>();
+        List<LevelOne> levelOnes = new ArrayList<>();
         for (LevelOneBean lob : levelOneBeans) {
             LevelOne levelOne = new LevelOne();
             levelOne.setNormalPic(lob.getNormalPic());
@@ -112,7 +112,7 @@ public class TemplateServiceImpl implements TemplateService {
             levelOne.setProgram(program);
 
             List<LevelTwoBean> levelTwoBeans = lob.getTwoContent();
-            Set<LevelTwo> levelTwos = new HashSet<>();
+            List<LevelTwo> levelTwos = new ArrayList<>();
             for (LevelTwoBean ltb : levelTwoBeans) {
                 LevelTwo levelTwo = new LevelTwo();
                 levelTwo.setLabel(ltb.getLabel());
@@ -121,7 +121,7 @@ public class TemplateServiceImpl implements TemplateService {
                 levelTwo.setUrl(ltb.getUrl());
                 levelTwo.setLevelOne(levelOne);
                 List<ContentBean> contentBeans = ltb.getContentBeans();
-                Set<Content> contents = new HashSet<>();
+                List<Content> contents = new ArrayList<>();
                 if (contentBeans != null && contentBeans.size() > 0) {
                     for (ContentBean contentBean : contentBeans) {
                         Content content = new Content();

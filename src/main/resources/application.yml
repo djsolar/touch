@@ -1,3 +1,4 @@
+upload-path: D:/uploadTemplate/
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/court
@@ -9,9 +10,12 @@ spring:
       ddl-auto: update
     show-sql: true
   freemarker:
-    suffix: .html
+    suffix: .ftl
   http:
     multipart:
       max-file-size: 100Mb
       max-request-size: 1000Mb
-
+  resources:
+    static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:${upload-path}
+  mvc:
+    static-path-pattern: /**

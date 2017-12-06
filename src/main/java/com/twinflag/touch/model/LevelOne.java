@@ -1,16 +1,18 @@
 package com.twinflag.touch.model;
 
-import org.hibernate.annotations.Type;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.repository.Modifying;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "t_level_one")
+@Data
+@NoArgsConstructor
 public class LevelOne {
 
     @Id
@@ -41,77 +43,6 @@ public class LevelOne {
     private Date createTime;
 
     @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "levelOne")
-    private Set<LevelTwo> levelTwos;
+    private List<LevelTwo> levelTwos;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getNormalPic() {
-        return normalPic;
-    }
-
-    public void setNormalPic(String normalPic) {
-        this.normalPic = normalPic;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public Program getProgram() {
-        return program;
-    }
-
-    public void setProgram(Program program) {
-        this.program = program;
-    }
-
-    public Integer getLevelOrder() {
-        return levelOrder;
-    }
-
-    public void setLevelOrder(Integer levelOrder) {
-        this.levelOrder = levelOrder;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public String getSelectedPic() {
-        return selectedPic;
-    }
-
-    public void setSelectedPic(String selectedPic) {
-        this.selectedPic = selectedPic;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Set<LevelTwo> getLevelTwos() {
-        return levelTwos;
-    }
-
-    public void setLevelTwos(Set<LevelTwo> levelTwos) {
-        this.levelTwos = levelTwos;
-    }
 }

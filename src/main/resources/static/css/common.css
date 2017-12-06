@@ -25,6 +25,14 @@ body {
     clear: both;
     padding: 5px;
 }
+#wrapper-content{
+    min-height: 700px;
+    background: #202020;
+}
+
+#wrapper-menu-tree {
+    min-height: 700px;
+}
 
 .resource-operation {
     margin-bottom: 10px;

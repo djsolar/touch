@@ -24,7 +24,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.html">法院管理系统</a>
+                <a class="navbar-brand" href="index.ftl">法院管理系统</a>
             </div>
             <div class="page-info">
                 <h4>终端管理</h4>
@@ -175,7 +175,7 @@
     <script src="/webjars/bootstrap/3.3.7/js/bootstrap.js"></script>
     <script src="../js/jquery.dataTables.js"></script>
     <script src="../js/dataTables.bootstrap.js"></script>
-    <script src="../js/bootstrap-treeview.js" type="text/javascript"></script>
+    <script src="../js/bootstrap-treeview.js"></script>
     <script>
     $(document).ready(function() {
         $('#dataTables-example').dataTable({
@@ -244,7 +244,7 @@
             {
                 text: 'Parent 3',
                 href: '#parent3',
-                tags: ['0']
+                tags: ['01111']
             },
             {
                 text: 'Parent 4',

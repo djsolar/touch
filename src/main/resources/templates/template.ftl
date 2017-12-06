@@ -23,7 +23,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="index.html">法院管理系统</a>
+            <a class="navbar-brand" href="index.ftl">法院管理系统</a>
         </div>
 
         <div class="page-info">

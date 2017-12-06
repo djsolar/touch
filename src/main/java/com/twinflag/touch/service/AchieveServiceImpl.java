@@ -36,4 +36,10 @@ public class AchieveServiceImpl implements AchieveService {
         User user = userRepository.findByUsername(userDetails.getUsername());
         return achieveRepository.findAchievesByCreateUser(user);
     }
+
+    @Override
+    public boolean deleteAchieve(Integer id) {
+        achieveRepository.delete(id);
+        return true;
+    }
 }

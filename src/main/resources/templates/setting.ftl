@@ -19,7 +19,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="index.html">法院管理系统</a>
+            <a class="navbar-brand" href="index.ftl">法院管理系统</a>
         </div>
         <div style="color: white;padding: 15px 50px 5px 50px;float: right;font-size: 16px;">
             上次登录 : 2014年5月24日 &nbsp;
