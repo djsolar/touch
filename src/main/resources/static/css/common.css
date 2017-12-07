@@ -28,6 +28,17 @@ body {
 #wrapper-content{
     min-height: 700px;
     background: #202020;
+    margin-left: 24px;
+}
+
+#wrapper-content .display-img h3{
+    text-align: center;
+    color: white;
+}
+
+#wrapper-content .display-img img {
+    width: 100%;
+    height: 100%;
 }
 
 #wrapper-menu-tree {

@@ -40,10 +40,24 @@
 
         </div>
 
-        <div id="wrapper-content" class="col-md-6 col-md-offset-1">
+        <div id="wrapper-content" class="col-md-7">
 
+           <#-- <div id="level-one" class="row">
+                <div class="display-img col-md-3 col-md-offset-2">
+                    <img src="/StreamingAssets/icons 1/立案服务.png">
+                    <h3>未选中图片</h3>
+                </div>
+
+                <div class="display-img col-md-3 col-md-offset-2">
+                    <img src="/StreamingAssets/icons 2/立案服务选中.png">
+                    <h3>选中图片</h3>
+                </div>
+            </div>-->
         </div>
     </div>
+    <#macro greet>
+        <h1>Hello, zhouyiran</h1>
+    </#macro>
 </div>
 
 <script src="/webjars/jquery/3.2.1/jquery.min.js"></script>
@@ -59,7 +73,7 @@
                     color: "#4D4D4D",
                     levels: 1,
                     onNodeSelected: function (event, data) {
-                        console.log(data);
+                        $("#wrapper-content").append("<@greet></@greet>")
                     }
                 });
             });

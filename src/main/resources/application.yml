@@ -11,6 +11,7 @@ spring:
     show-sql: true
   freemarker:
     suffix: .ftl
+    cache: false
   http:
     multipart:
       max-file-size: 100Mb

@@ -32,11 +32,6 @@
             <button type="submit" class="btn btn-primary login-btn">登录</button>
         </form>
     </div>
-
-    <div class="footer-bottom container">
-        <p> Copyright©1999-2017 Twinflag All Rights Reserved.</p>
-        <p>京ICP备09078677号-7京公网安备110108001839号</p>
-    </div>
 </div>
 </body>
 </html>
