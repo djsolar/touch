@@ -18,6 +18,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,8 +86,9 @@ public class ProgramController {
         for(LevelOne levelOne : levelOnes) {
             ObjectNode levelOneNode = mapper.createObjectNode();
             levelOneNode.put("text","level-1");
-            levelOneNode.put("iconurl_a", levelOne.getNormalPic());
-            levelOneNode.put("iconurl_b", levelOne.getSelectedPic());
+            levelOneNode.put("type", "level1");
+            levelOneNode.put("iconurl_a", "/" + program.getProgramName() + "/" + levelOne.getNormalPic());
+            levelOneNode.put("iconurl_b", "/" + program.getProgramName() + "/" + levelOne.getSelectedPic());
             List<LevelTwo> levelTwos = levelOne.getLevelTwos();
             ArrayNode levelTwoNodes = mapper.createArrayNode();
             for(LevelTwo levelTwo : levelTwos) {
@@ -96,6 +98,7 @@ public class ProgramController {
                 levelTwoNode.put("ismany", levelTwo.isMany());
                 levelTwoNode.put("title", levelTwo.getTitle());
                 levelTwoNode.put("url", levelTwo.getUrl());
+                levelTwoNode.put("type", "level-two");
                 List<Content> contents = levelTwo.getContents();
                 if (contents.size() > 0) {
                     ArrayNode contentNodes = mapper.createArrayNode();
@@ -104,6 +107,7 @@ public class ProgramController {
                         String title = content.getTitle() == null ? content.getTitle(): "content";
                         contentNode.put("text", title);
                         contentNode.put("title", content.getTitle());
+                        contentNode.put("type", "");
                         List<Source> sources = content.getSources();
                         if (sources.size() == 1) {
                             contentNode.put("url", sources.get(0).getRelativePath());

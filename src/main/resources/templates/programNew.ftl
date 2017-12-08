@@ -41,24 +41,23 @@
         </div>
 
         <div id="wrapper-content" class="col-md-7">
-
-           <#-- <div id="level-one" class="row">
-                <div class="display-img col-md-3 col-md-offset-2">
-                    <img src="/StreamingAssets/icons 1/立案服务.png">
-                    <h3>未选中图片</h3>
-                </div>
-
-                <div class="display-img col-md-3 col-md-offset-2">
-                    <img src="/StreamingAssets/icons 2/立案服务选中.png">
-                    <h3>选中图片</h3>
-                </div>
-            </div>-->
         </div>
     </div>
-    <#macro greet>
-        <h1>Hello, zhouyiran</h1>
-    </#macro>
 </div>
+
+<script id="level-one-template" type="text/html">
+    <div id="level-one" class="row">
+        <div class="display-img col-md-3 col-md-offset-2">
+            <img src="{{iconurl_a}}">
+            <h3>未选中图片</h3>
+        </div>
+
+        <div class="display-img col-md-3 col-md-offset-2">
+            <img src="{{iconurl_b}}">
+            <h3>选中图片</h3>
+        </div>
+    </div>
+</script>
 
 <script src="/webjars/jquery/3.2.1/jquery.min.js"></script>
 <script src="/webjars/bootstrap/3.3.7/js/bootstrap.js"></script>
@@ -66,6 +65,26 @@
 <script src="${basePath}/js/dataTables.bootstrap.js"></script>
 <script src="${basePath}/js/bootstrap-treeview.js"></script>
 <script>
+
+    function replace_html_tags(str, reallyDo, replaceWith) {
+        var e = new RegExp(reallyDo, "g");
+        return str.replace(e, replaceWith);
+    }
+    
+    function display_selete_node(data) {
+        console.log(data);
+        display_level_one(data)
+    }
+    
+    
+    function display_level_one(data) {
+        var levelOneHtml = $("#level-one-template").html();
+        levelOneHtml = replace_html_tags(levelOneHtml, "{{iconurl_a}}", data.iconurl_a);
+        levelOneHtml = replace_html_tags(levelOneHtml, "{{iconurl_b}}", data.iconurl_b);
+        $("#wrapper-content").empty();
+        $("#wrapper-content").append(levelOneHtml);
+    }
+
     var data = ${programData}
             $(function () {
                 var tree = $("#wrapper-menu-tree").treeview({
@@ -73,7 +92,8 @@
                     color: "#4D4D4D",
                     levels: 1,
                     onNodeSelected: function (event, data) {
-                        $("#wrapper-content").append("<@greet></@greet>")
+                        display_selete_node(data)
+
                     }
                 });
             });
