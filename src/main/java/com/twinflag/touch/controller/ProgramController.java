@@ -3,12 +3,13 @@ package com.twinflag.touch.controller;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.twinflag.touch.entity.ContentBean;
+import com.twinflag.touch.entity.LevelOneBean;
+import com.twinflag.touch.entity.LevelTwoBean;
 import com.twinflag.touch.model.*;
 import com.twinflag.touch.service.ProgramService;
 import com.twinflag.touch.service.TemplateService;
+import com.twinflag.touch.tree.TreeLevel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.datatables.mapping.DataTablesInput;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
@@ -18,11 +19,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @Controller
 @RequestMapping("/program")
@@ -70,63 +70,67 @@ public class ProgramController {
     public String createProgram(@PathVariable Integer id, Model model) {
         Program program = templateService.findTemplate(id);
         try {
-            String programData = transferProgramJSON(program);
-            model.addAttribute("programData", programData);
+            String programData2 = transferProgramTree(program);
+            System.out.println(programData2);
+            model.addAttribute("programData", programData2);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
         return "programNew";
     }
 
-    public String transferProgramJSON(Program program) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-
+    public String transferProgramTree(Program program) throws JsonProcessingException {
         List<LevelOne> levelOnes = program.getLevelOnes();
-        ArrayNode levelOneNodes = mapper.createArrayNode();
+        List<TreeLevel> treeLevelOnes = new ArrayList<>();
         for(LevelOne levelOne : levelOnes) {
-            ObjectNode levelOneNode = mapper.createObjectNode();
-            levelOneNode.put("text","level-1");
-            levelOneNode.put("type", "level1");
-            levelOneNode.put("iconurl_a", "/" + program.getProgramName() + "/" + levelOne.getNormalPic());
-            levelOneNode.put("iconurl_b", "/" + program.getProgramName() + "/" + levelOne.getSelectedPic());
+            LevelOneBean levelOneBean = new LevelOneBean();
+            levelOneBean.setNormalPic(levelOne.getNormalPic().getAbsolutePath());
+            levelOneBean.setSelectedPic(levelOne.getSelectedPic().getAbsolutePath());
+            TreeLevel treeLevel = new TreeLevel();
+            treeLevel.setText("Level-1");
+            treeLevel.setType(0);
+            treeLevel.setData(levelOneBean);
             List<LevelTwo> levelTwos = levelOne.getLevelTwos();
-            ArrayNode levelTwoNodes = mapper.createArrayNode();
+            List<TreeLevel> treeLevelTwos = new ArrayList<>();
             for(LevelTwo levelTwo : levelTwos) {
-                ObjectNode levelTwoNode = mapper.createObjectNode();
-                levelTwoNode.put("text", levelTwo.getLabel());
-                levelTwoNode.put("title", levelTwo.getLabel());
-                levelTwoNode.put("ismany", levelTwo.isMany());
-                levelTwoNode.put("title", levelTwo.getTitle());
-                levelTwoNode.put("url", levelTwo.getUrl());
-                levelTwoNode.put("type", "level-two");
+                LevelTwoBean levelTwoBean = new LevelTwoBean();
+                levelTwoBean.setLabel(levelTwo.getLabel());
+                levelTwoBean.setTitle(levelTwo.getTitle());
+                levelTwoBean.setMany(levelTwo.isMany());
+                levelTwoBean.setUrl(levelTwo.getUrl());
+                TreeLevel treeLevelTwo = new TreeLevel();
+                treeLevelTwo.setText(levelTwo.getLabel());
+                treeLevelTwo.setType(1);
+                treeLevelTwo.setData(levelTwoBean);
                 List<Content> contents = levelTwo.getContents();
+                List<TreeLevel> treeLevelContents = new ArrayList<>();
                 if (contents.size() > 0) {
-                    ArrayNode contentNodes = mapper.createArrayNode();
                     for(Content content : contents) {
-                        ObjectNode contentNode = mapper.createObjectNode();
-                        String title = content.getTitle() == null ? content.getTitle(): "content";
-                        contentNode.put("text", title);
-                        contentNode.put("title", content.getTitle());
-                        contentNode.put("type", "");
+                        TreeLevel treeLevelContent = new TreeLevel();
+                        ContentBean contentBean = new ContentBean();
+                        contentBean.setType(content.getType());
+                        contentBean.setLabel(content.getLabel());
+                        contentBean.setTitle(contentBean.getTitle());
                         List<Source> sources = content.getSources();
-                        if (sources.size() == 1) {
-                            contentNode.put("url", sources.get(0).getRelativePath());
-                        } else {
-                            ArrayNode sourceNode = mapper.createArrayNode();
-                            for(Source source : sources) {
-                                sourceNode.add(source.getRelativePath());
-                            }
-                            contentNode.set("urls", sourceNode);
+                        List<String> paths = new ArrayList<>();
+                        for(Source source : sources) {
+                            paths.add(source.getAbsolutePath());
                         }
-                        contentNodes.add(contentNode);
+                        contentBean.setPaths(paths);
+                        String title = content.getTitle() != null ? content.getTitle(): "content";
+                        treeLevelContent.setText(title);
+                        treeLevelContent.setType(2);
+                        treeLevelContent.setData(contentBean);
+                        treeLevelContents.add(treeLevelContent);
                     }
-                    levelTwoNode.set("nodes", contentNodes);
+                    treeLevelTwo.setNodes(treeLevelContents);
                 }
-                levelTwoNodes.add(levelTwoNode);
+                treeLevelTwos.add(treeLevelTwo);
             }
-            levelOneNode.set("nodes", levelTwoNodes);
-            levelOneNodes.add(levelOneNode);
+            treeLevel.setNodes(treeLevelTwos);
+            treeLevelOnes.add(treeLevel);
         }
-        return mapper.writeValueAsString(levelOneNodes);
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.writeValueAsString(treeLevelOnes);
     }
 }

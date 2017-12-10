@@ -1,9 +1,14 @@
 package com.twinflag.touch.model;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "t_source")
+@Data
+@NoArgsConstructor
 public class Source {
 
     @Id
@@ -17,38 +22,6 @@ public class Source {
     private String relativePath;
 
     @ManyToOne
-    @JoinColumn(name = "level_one_id")
+    @JoinColumn(name = "content_id")
     private Content content;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getAbsolutePath() {
-        return absolutePath;
-    }
-
-    public void setAbsolutePath(String absolutePath) {
-        this.absolutePath = absolutePath;
-    }
-
-    public String getRelativePath() {
-        return relativePath;
-    }
-
-    public void setRelativePath(String relativePath) {
-        this.relativePath = relativePath;
-    }
-
-    public Content getContent() {
-        return content;
-    }
-
-    public void setContent(Content content) {
-        this.content = content;
-    }
 }

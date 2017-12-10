@@ -1,7 +1,8 @@
-upload-path: D:/uploadTemplate/
+upload-template-path: /Users/zhouyiran/Downloads/uploadTemplate/
+upload-material-path: /Users/zhouyiran/Downloads/uploadMatrial/
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/court
+    url: jdbc:mysql://localhost:3306/court?useUnicode=true&characterEncoding=utf8
     username: root
     password: zhouyiran
     driver-class-name: com.mysql.jdbc.Driver

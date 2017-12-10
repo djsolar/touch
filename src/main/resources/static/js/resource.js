@@ -16,6 +16,32 @@ $(function () {
     });
 
     $("ol#achieve_manage li:first-child").addClass("folder-active");
+
+    $('#fileupload').fileupload({
+        dataType: 'json',
+        formData: {"achieveId": $(".folder-filter #achieve_manage li.folder-active").attr("id")},
+        done: function (e, data) {
+            $("tr:has(td)").remove();
+            $.each(data.result, function (index, file) {
+
+                $("#uploaded-files").append(
+                    $('<tr/>')
+                        .append($('<td/>').text(file.fileName))
+                        .append($('<td/>').text(file.fileSize))
+                        .append($('<td/>').text(file.fileType))
+                )
+            });
+        },
+
+        progressall: function (e, data) {
+            var progress = parseInt(data.loaded / data.total * 100, 10);
+            $('#progress .progress-bar').css(
+                'width',
+                progress + '%'
+            ).text(progress + "%");
+            console.log("progress: " + progress)
+        }
+    });
 });
 
 function add_achieve() {
@@ -41,18 +67,6 @@ function delete_achieve() {
             if (data) {
                 window.location.reload();
             }
-        }
-    });
-}
-
-function upload_material() {
-
-    $('#fileupload').fileupload({
-        dataType: 'json',
-        done: function (e, data) {
-            $.each(data.result.files, function (index, file) {
-                $('<p/>').text(file.name).appendTo(document.body);
-            });
         }
     });
 }

@@ -7,12 +7,40 @@ public class FileUtil {
 
     public static void uploadFile(byte[] file, String filePath, String fileName) throws Exception {
         File targetFile = new File(filePath);
-        if(!targetFile.exists()){
-            targetFile.mkdirs();
+        if (!targetFile.exists()) {
+            boolean makeDir = targetFile.mkdirs();
+            System.out.println("makeDir = " + makeDir);
         }
-        FileOutputStream out = new FileOutputStream(filePath+fileName);
+        FileOutputStream out = new FileOutputStream(filePath + fileName);
         out.write(file);
         out.flush();
         out.close();
+    }
+
+    /*public static void main(String[] args) {
+        File file = new File("/Users/zhouyiran")
+    }*/
+
+    public static int getType(String fileName) {
+        if (fileName.endsWith(".png") || fileName.endsWith(".jpg") ||
+                fileName.endsWith(".gif")) {
+            return SourceType.IMAGE.getType();
+        } else if (fileName.endsWith(".txt")) {
+            return SourceType.TEXT.getType();
+        } else {
+            return SourceType.NONE.getType();
+        }
+    }
+
+    public static String getMd5Path(String filePath, String md5) {
+        File file = new File(filePath);
+        String dirPath = file.getParentFile().getAbsolutePath();
+        String fileName = file.getName();
+        String suffix = fileName.substring(fileName.lastIndexOf('.'));
+        return dirPath + File.separator + md5 + suffix;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(getMd5Path("/Users/zhouyiran/Desktop/aa.txt", "defghijklmn"));
     }
 }

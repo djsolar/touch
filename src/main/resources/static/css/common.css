@@ -26,9 +26,11 @@ body {
     padding: 5px;
 }
 #wrapper-content{
-    min-height: 700px;
+    height: 700px;
     background: #202020;
     margin-left: 24px;
+    color: #fff;
+    overflow: scroll;
 }
 
 #wrapper-content .display-img h3{
@@ -41,8 +43,38 @@ body {
     height: 100%;
 }
 
+#wrapper-content #level-two {
+    margin-top: 10%;
+}
+#wrapper-operation {
+    padding: 10px 20px 0 0;
+    background: #fff;
+}
+
+#content ul li.content-img {
+    border: 2px solid #fff;
+}
+
+#wrapper-content #level-one {
+    margin-top: 10%;
+}
+
+#wrapper-content #content {
+    margin-top: 10%;
+}
+
+#wrapper-content input {
+    width: 50%;
+}
+
+#progress {
+    margin: 20px 0;
+}
+
+
 #wrapper-menu-tree {
-    min-height: 700px;
+    height: 700px;
+    overflow: scroll;
 }
 
 .resource-operation {

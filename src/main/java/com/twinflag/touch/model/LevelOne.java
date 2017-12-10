@@ -19,11 +19,13 @@ public class LevelOne {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(name = "normal_pic")
-    private String normalPic;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "normal_pic")
+    private Source normalPic;
 
-    @Column(name = "selected_pic")
-    private String selectedPic;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "selected_pic")
+    private Source selectedPic;
 
     private String url;
 

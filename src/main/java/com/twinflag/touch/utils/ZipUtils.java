@@ -266,7 +266,7 @@ public class ZipUtils {
         expand.setProject(project);
         expand.setTaskType("unzip");
         expand.setTaskName("unzip");
-        expand.setEncoding("GBK");
+        expand.setEncoding("UTF-8");
         expand.setSrc(zipFile);
         expand.setDest(new File(destPath));
         expand.execute();

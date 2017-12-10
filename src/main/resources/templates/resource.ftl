@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <#assign basePath=springMacroRequestContext.contextPath>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="_csrf" content="${_csrf.token}"/>
@@ -10,10 +11,10 @@
     <title>素材管理</title>
     <!-- Bootstrap css -->
     <link rel="stylesheet" href="/webjars/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="../css/dataTables.bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="../css/font-awesome.css">
-    <link rel="stylesheet" type="text/css" href="../css/bootstrap-treeview.css">
-    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" type="text/css" href="${basePath}/css/dataTables.bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="${basePath}/css/font-awesome.css">
+    <link rel="stylesheet" type="text/css" href="${basePath}/css/bootstrap-treeview.css">
+    <link rel="stylesheet" href="${basePath}/css/common.css">
 </head>
 
 <body>
@@ -96,9 +97,6 @@
                     <div class="resource-head">
                         <div class="panel-title">
                             <h4>素材分类</h4>
-                        </div>
-                        <div class="panel-up">
-                            <a class="fa fa-angle-double-up fa-2x"></a>
                         </div>
                     </div>
                     <div class="folder-filter">
@@ -197,13 +195,23 @@
                 </div>
                 <div class="modal-body">
                     <input id="fileupload" type="file" name="files[]" data-url="/resource/upload/" multiple>
+                    <div id="progress" class="progress">
+                        <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                            0%
+                        </div>
+                    </div>
+
+                    <table id="uploaded-files" class="table">
+                        <tr>
+                            <th>文件名</th>
+                            <th>文件大小</th>
+                            <th>文件类型</th>
+                        </tr>
+                    </table>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">
                         取消
-                    </button>
-                    <button type="button" class="btn btn-primary" onclick="delete_achieve()">
-                        上传
                     </button>
                 </div>
             </div>
@@ -260,25 +268,17 @@
 <!-- JQUERY SCRIPTS -->
 <script src="/webjars/jquery/3.2.1/jquery.min.js"></script>
 <script src="/webjars/bootstrap/3.3.7/js/bootstrap.js"></script>
-<script src="../js/jquery.dataTables.js"></script>
-<script src="../js/dataTables.bootstrap.js"></script>
-<script src="../js/bootstrap-treeview.js" type="text/javascript"></script>
-<script src="../js/jquery.iframe-transport.js"></script>
+<script src="${basePath}/js/jquery.dataTables.js"></script>
+<script src="${basePath}/js/dataTables.bootstrap.js"></script>
+<script src="${basePath}/js/bootstrap-treeview.js" type="text/javascript"></script>
+<script src="${basePath}/js/jquery.iframe-transport.js"></script>
+<script src="${basePath}/js/vendor/jquery.ui.widget.js"></script>
 <!-- The basic File Upload plugin -->
-<script src="../js/jquery.fileupload.js"></script>
+<script src="${basePath}/js/jquery.fileupload.js"></script>
 <!-- The File Upload processing plugin -->
-<script src="../js/jquery.fileupload-process.js"></script>
-<!-- The File Upload image preview & resize plugin -->
-<script src="../js/jquery.fileupload-image.js"></script>
-<!-- The File Upload audio preview plugin -->
-<script src="../js/jquery.fileupload-audio.js"></script>
-<!-- The File Upload video preview plugin -->
-<script src="../js/jquery.fileupload-video.js"></script>
-<!-- The File Upload validation plugin -->
-<script src="../js/jquery.fileupload-validate.js"></script>
 <!-- The File Upload user interface plugin -->
-<script src="../js/jquery.fileupload-ui.js"></script>
-<script src="../js/resource.js"></script>
+<script src="${basePath}/js/resource.js"></script>
+
 </body>
 
 </html>

@@ -1,6 +1,7 @@
 package com.twinflag.touch.model;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -12,6 +13,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "t_user")
+@NoArgsConstructor
 public class User {
 
     @Id

@@ -32,15 +32,17 @@
             <a href="/logout" class="btn btn-danger square-btn-adjust">退出</a>
         </div>
     </nav>
-    <div id="wrapper-head">
-
-    </div>
+    <#--<div id="wrapper-head">
+        <button class="btn btn-primary ">返回</button>
+        <button class="btn btn-primary">保存</button>
+    </div>-->
     <div id="wrapper-inner" class="row">
         <div id="wrapper-menu-tree" class="col-md-3 col-md-offset-1">
 
         </div>
 
         <div id="wrapper-content" class="col-md-7">
+
         </div>
     </div>
 </div>
@@ -48,14 +50,73 @@
 <script id="level-one-template" type="text/html">
     <div id="level-one" class="row">
         <div class="display-img col-md-3 col-md-offset-2">
-            <img src="{{iconurl_a}}">
+            <img src="{{data.normalPic}}">
             <h3>未选中图片</h3>
         </div>
 
         <div class="display-img col-md-3 col-md-offset-2">
-            <img src="{{iconurl_b}}">
+            <img src="{{data.selectedPic}}">
             <h3>选中图片</h3>
         </div>
+    </div>
+</script>
+
+<script id="content" type="text/html">
+    <div id="content">
+        {{if data.label }}
+        <div class="form-group">
+            <label for="content-label">标签</label>
+            <input id="content-label" class="form-control" type="text" value="{{data.label}}">
+        </div>
+        {{/if}}
+
+        {{if data.title }}
+        <div class="form-group">
+            <label for="content-title">标题</label>
+            <input id="content-title" class="form-control" type="text" value="{{data.title}}">
+        </div>
+        {{/if}}
+
+        <ul class="list-group" style="list-style: none">
+            {{each data.paths value}}
+            {{if data.type == 1}}
+            <li class="content-img">
+                <div>
+                    <img src="{{value}}" alt="{{value}}">
+                </div>
+            </li>
+            {{else if data.type == 2}}
+            <li class="content-txt">
+                <label>{{value}}</label>
+                <button class="btn btn-success">查看</button>
+                <button class="btn btn-primary">编辑</button>
+            </li>
+            {{/if}}
+            {{/each}}
+        </ul>
+    </div>
+</script>
+
+<script id="level-two-template" type="text/html">
+    <div id="level-two">
+        <div class="form-group">
+            <label for="level-two-label">标签</label>
+            <input id="level-two-label" class="form-control" type="text" value="{{data.label}}">
+        </div>
+
+        {{if data.title }}
+        <div class="form-group">
+            <label for="level-two-title">标题</label>
+            <input id="level-two-title" class="form-control" type="text" value="{{data.title}}">
+        </div>
+        {{/if}}
+        {{if data.url }}
+        <label style="margin-top: 20px;">文件路径 </label>
+        <p>{{data.url}}
+            <button class="btn btn-success">查看</button>
+            <button class="btn btn-primary">编辑</button>
+        </p>
+        {{/if}}
     </div>
 </script>
 
@@ -64,39 +125,53 @@
 <script src="${basePath}/js/jquery.dataTables.js"></script>
 <script src="${basePath}/js/dataTables.bootstrap.js"></script>
 <script src="${basePath}/js/bootstrap-treeview.js"></script>
+<script src="${basePath}/js/template-web.js"></script>
 <script>
 
-    function replace_html_tags(str, reallyDo, replaceWith) {
-        var e = new RegExp(reallyDo, "g");
-        return str.replace(e, replaceWith);
-    }
-    
-    function display_selete_node(data) {
+    function display_selected_node(data) {
         console.log(data);
-        display_level_one(data)
+        var type = data.type;
+        if (type === 0) {
+            display_level_one(data)
+        } else if (type === 1) {
+            display_level_two(data);
+        } else if (type === 2) {
+            display_content(data);
+        }
     }
-    
-    
+
+    function display_level_two(data) {
+        var levelTwoHtml = template("level-two-template", data);
+        var contentNode = $("#wrapper-content");
+        contentNode.empty();
+        contentNode.append(levelTwoHtml);
+    }
+
+    function display_content(data) {
+        var result = template("content", data);
+        var contentNode = $("#wrapper-content");
+        contentNode.empty();
+        contentNode.append(result);
+    }
+
     function display_level_one(data) {
-        var levelOneHtml = $("#level-one-template").html();
-        levelOneHtml = replace_html_tags(levelOneHtml, "{{iconurl_a}}", data.iconurl_a);
-        levelOneHtml = replace_html_tags(levelOneHtml, "{{iconurl_b}}", data.iconurl_b);
-        $("#wrapper-content").empty();
-        $("#wrapper-content").append(levelOneHtml);
+        var levelOneHtml = template("level-one-template", data);
+        var contentNode = $("#wrapper-content");
+        contentNode.empty();
+        contentNode.append(levelOneHtml);
     }
 
-    var data = ${programData}
-            $(function () {
-                var tree = $("#wrapper-menu-tree").treeview({
-                    data: data,
-                    color: "#4D4D4D",
-                    levels: 1,
-                    onNodeSelected: function (event, data) {
-                        display_selete_node(data)
-
-                    }
-                });
-            });
+    var data = ${programData};
+    $(function () {
+        var tree = $("#wrapper-menu-tree").treeview({
+            data: data,
+            color: "#4D4D4D",
+            levels: 1,
+            onNodeSelected: function (event, data) {
+                display_selected_node(data)
+            }
+        });
+    });
 </script>
 </body>
 </html>

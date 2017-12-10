@@ -17,7 +17,7 @@ public class TestUserService {
     @Test
     public void testSaveUser() {
         User user = new User();
-        user.setUsername("zhouyiran");
+        user.setUsername("admin");
         user.setPassword("admin");
         user.setEmail("719151975@qq.com");
         userService.save(user);

@@ -1,5 +1,6 @@
 package com.twinflag.touch.service;
 
+import com.twinflag.touch.config.Config;
 import com.twinflag.touch.entity.ContentBean;
 import com.twinflag.touch.entity.LevelOneBean;
 import com.twinflag.touch.entity.LevelTwoBean;
@@ -9,6 +10,7 @@ import com.twinflag.touch.respository.UserRepository;
 import com.twinflag.touch.utils.*;
 import org.dom4j.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.datatables.mapping.DataTablesInput;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.data.jpa.domain.Specification;
@@ -32,6 +34,9 @@ import java.util.Set;
 public class TemplateServiceImpl implements TemplateService {
 
     @Autowired
+    private Config config;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -44,11 +49,12 @@ public class TemplateServiceImpl implements TemplateService {
 
     @Override
     public void uploadTemplate(MultipartFile file, String fileName) throws Exception {
-        String filePath = Constant.UPLOAD_FILE_FOLDER;
-        FileUtil.uploadFile(file.getBytes(), filePath, fileName);
-        String srcPath = filePath + fileName;
-        ZipUtils.unZip(srcPath, filePath);
-        Program program = transferEntityToModal(fileName, filePath);
+        String uploadFilePath = config.getUploadTemplatePath();
+        System.out.println(uploadFilePath);
+        FileUtil.uploadFile(file.getBytes(), uploadFilePath, fileName);
+        String srcPath = uploadFilePath + fileName;
+        ZipUtils.unZip(srcPath, uploadFilePath);
+        Program program = transferEntityToModal(fileName, uploadFilePath);
         programRepository.save(program);
     }
 
@@ -106,8 +112,16 @@ public class TemplateServiceImpl implements TemplateService {
         List<LevelOne> levelOnes = new ArrayList<>();
         for (LevelOneBean lob : levelOneBeans) {
             LevelOne levelOne = new LevelOne();
-            levelOne.setNormalPic(lob.getNormalPic());
-            levelOne.setSelectedPic(lob.getSelectedPic());
+            Source normalPic = new Source();
+            normalPic.setRelativePath(lob.getNormalPic());
+            normalPic.setAbsolutePath("/" + directoryName + "/" + lob.getNormalPic());
+            levelOne.setNormalPic(normalPic);
+
+            Source selectedPic = new Source();
+            selectedPic.setRelativePath(lob.getSelectedPic());
+            selectedPic.setAbsolutePath("/" + directoryName + "/" + lob.getSelectedPic());
+
+            levelOne.setSelectedPic(selectedPic);
             levelOne.setUrl(lob.getUrl());
             levelOne.setProgram(program);
 
@@ -134,6 +148,7 @@ public class TemplateServiceImpl implements TemplateService {
                         for (String path : paths) {
                             Source source = new Source();
                             source.setRelativePath(path);
+                            source.setAbsolutePath("/" + directoryName + "/" + path);
                             source.setContent(content);
                             sources.add(source);
                         }

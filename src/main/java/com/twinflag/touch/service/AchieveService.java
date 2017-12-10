@@ -11,4 +11,6 @@ public interface AchieveService {
     List<Achieve> findAll();
 
     boolean deleteAchieve(Integer id);
+
+    Achieve findAchieve(Integer id);
 }

@@ -42,4 +42,9 @@ public class AchieveServiceImpl implements AchieveService {
         achieveRepository.delete(id);
         return true;
     }
+
+    @Override
+    public Achieve findAchieve(Integer id) {
+        return achieveRepository.findOne(id);
+    }
 }
