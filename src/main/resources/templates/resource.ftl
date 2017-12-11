@@ -113,40 +113,7 @@
                 </div>
                 <div class="resource-display">
                     <div class="resource-info">
-                        <ol class="list-inline">
-                            <li class="display-active">
-                                <img class="image-info" src="img/1.png">
-                                <h6>文件夹1文件夹1文件夹1文件夹1</h6>
-                            </li>
-                            <li>
-                                <img class="image-info" src="img/1.png">
-                                <h6>文件夹1文件夹1文件夹1文件夹1</h6>
-                            </li>
-                            <li>
-                                <img class="image-info" src="img/1.png">
-                                <h6>文件夹1文件夹1文件夹1文件夹1</h6>
-                            </li>
-                            <li>
-                                <img class="image-info" src="img/1.png">
-                                <h6>文件夹1文件夹1文件夹1文件夹1</h6>
-                            </li>
-                            <li>
-                                <img class="image-info" src="img/1.png">
-                                <h6>文件夹1文件夹1文件夹1文件夹1</h6>
-                            </li>
-                            <li>
-                                <img class="image-info" src="img/1.png">
-                                <h6>文件夹1文件夹1文件夹1文件夹1</h6>
-                            </li>
-                            <li>
-                                <img class="image-info" src="img/1.png">
-                                <h6>文件夹1文件夹1文件夹1文件夹1</h6>
-                            </li>
-                            <li>
-                                <img class="image-info" src="img/1.png">
-                                <h6>文件夹1文件夹1文件夹1文件夹1</h6>
-                            </li>
-                        </ol>
+
                     </div>
                 </div>
             </div>
@@ -263,6 +230,17 @@
     <!-- /. PAGE WRAPPER  -->
 </div>
 
+<script id="resource-display-template" type="text/html">
+    <ol class="list-inline">
+        {{each data material}}
+        <li class="display-active">
+            <img class="image-info" src="/{{material.macName}}">
+            <h6>{{material.originName}}</h6>
+        </li>
+        {{/each}}
+    </ol>
+</script>
+
 <!-- /. WRAPPER  -->
 <!-- SCRIPTS -AT THE BOTOM TO REDUCE THE LOAD TIME-->
 <!-- JQUERY SCRIPTS -->
@@ -275,6 +253,8 @@
 <script src="${basePath}/js/vendor/jquery.ui.widget.js"></script>
 <!-- The basic File Upload plugin -->
 <script src="${basePath}/js/jquery.fileupload.js"></script>
+<script src="${basePath}/js/template-web.js"></script>
+
 <!-- The File Upload processing plugin -->
 <!-- The File Upload user interface plugin -->
 <script src="${basePath}/js/resource.js"></script>

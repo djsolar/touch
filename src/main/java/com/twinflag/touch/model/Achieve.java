@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -32,5 +33,5 @@ public class Achieve implements Serializable{
     private int authority; // 0：私有 1：共享
 
     @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "achieve")
-    private Set<Material> materials;
+    private List<Material> materials;
 }

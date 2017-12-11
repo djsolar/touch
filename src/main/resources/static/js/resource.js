@@ -10,16 +10,39 @@ $(function () {
         }
     );
 
+    $("ol#achieve_manage li:first-child").addClass("folder-active");
+    var id = $("li.folder-active").attr("id");
+    $.ajax({
+        url: "/resource/getAchieveMaterial",
+        data: {"id": id},
+        success: function (data) {
+            var result = template("resource-display-template", {"data": data});
+            var resourceInfo = $(".resource-display .resource-info");
+            resourceInfo.empty();
+            resourceInfo.append(result);
+        }
+    })
+
     $("ol#achieve_manage li").click(function () {
         $(this).parent().children().removeClass("folder-active");
         $(this).addClass("folder-active");
+        id = $(this).attr("id");
+        $.ajax({
+            url: "/resource/getAchieveMaterial",
+            data: {"id": id},
+            success: function (data) {
+                var result = template("resource-display-template", {"data": data});
+                var resourceInfo = $(".resource-display .resource-info");
+                resourceInfo.empty();
+                resourceInfo.append(result);
+            }
+        })
     });
-
-    $("ol#achieve_manage li:first-child").addClass("folder-active");
 
     $('#fileupload').fileupload({
         dataType: 'json',
-        formData: {"achieveId": $(".folder-filter #achieve_manage li.folder-active").attr("id")},
+        formData: {"achieveId": id},
+        acceptFileTypes: /(\.|\/)(gif|jpe?g|png|txt)$/i,
         done: function (e, data) {
             $("tr:has(td)").remove();
             $.each(data.result, function (index, file) {

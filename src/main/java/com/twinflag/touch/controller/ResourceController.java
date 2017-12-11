@@ -62,6 +62,15 @@ public class ResourceController {
         return true;
     }
 
+    @RequestMapping(value = "/getAchieveMaterial", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public List<Material> getAchieveMaterial(Integer id) {
+        Achieve achieve = achieveService.findAchieve(id);
+        List<Material> materials = achieve.getMaterials();
+
+        return materials;
+    }
+
     @RequestMapping(value = "/deleteAchieve", method = RequestMethod.POST)
     @ResponseBody
     public boolean deleteAchieve(Integer id) {
@@ -72,6 +81,7 @@ public class ResourceController {
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     @ResponseBody
     public LinkedList<FileMeta> uploadResource(MultipartHttpServletRequest request, Integer achieveId) {
+        System.out.println("achieveId = " + achieveId);
 
         Achieve achieve = achieveService.findAchieve(achieveId);
         //1. build an iterator
@@ -112,7 +122,9 @@ public class ResourceController {
                 String md5Name = MD5Util.getMd5ByFile(mpf.getBytes());
                 String md5Path = FileUtil.getMd5Path(filePath, md5Name);
                 FileCopyUtils.copy(mpf.getBytes(), new FileOutputStream(md5Path));
-                material.setMacName(md5Name);
+                File file = new File(md5Path);
+                String macName = file.getName();
+                material.setMacName(macName);
                 material.setPath(md5Path);
 
             } catch (IOException e) {

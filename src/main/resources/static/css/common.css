@@ -103,6 +103,10 @@ div.folder-filter span{
     color: #fff;
 }
 
+.resource-display .resource-info ol > li {
+    text-align: center;
+}
+
 
 .panel-up {
     float: right;
