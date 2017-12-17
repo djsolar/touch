@@ -32,10 +32,10 @@
             <a href="/logout" class="btn btn-danger square-btn-adjust">退出</a>
         </div>
     </nav>
-    <#--<div id="wrapper-head">
-        <button class="btn btn-primary ">返回</button>
-        <button class="btn btn-primary">保存</button>
-    </div>-->
+<#--<div id="wrapper-head">
+    <button class="btn btn-primary ">返回</button>
+    <button class="btn btn-primary">保存</button>
+</div>-->
     <div id="wrapper-inner" class="row">
         <div id="wrapper-menu-tree" class="col-md-3 col-md-offset-1">
 
@@ -47,6 +47,40 @@
     </div>
 </div>
 
+<div class="modal fade" id="selectMaterial" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    编辑素材
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="panel-body">
+                    <div class="material_menu">
+
+                    </div>
+                    <div class="material-container">
+                        <table class="table" id="materialDataTables">
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消
+                </button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+
 <script id="level-one-template" type="text/html">
     <div id="level-one" class="row">
         <div class="display-img col-md-3 col-md-offset-2">
@@ -55,7 +89,7 @@
         </div>
 
         <div class="display-img col-md-3 col-md-offset-2">
-            <img src="{{data.selectedPic}}">
+            <img src="{{data.selectedPic}}" onclick="add_level_one_click()">
             <h3>选中图片</h3>
         </div>
     </div>
@@ -120,47 +154,30 @@
     </div>
 </script>
 
+<script id="material-list" type="text/html">
+    <#--<div class="material-item">
+        <img class="material-select" src="/{{material.macName}}">
+        <h4>{{material.originName}}</h4>
+    </div>-->
+    <div class="row material-item">
+        <div class="col-sm-6 col-md-4">
+            <div>
+                <img class="material-select" src="/{{macName}}">
+                <div class="caption">
+                    <h4>{{macName}}</h4>
+                </div>
+            </div>
+        </div>
+</script>
+
 <script src="/webjars/jquery/3.2.1/jquery.min.js"></script>
 <script src="/webjars/bootstrap/3.3.7/js/bootstrap.js"></script>
 <script src="${basePath}/js/jquery.dataTables.js"></script>
 <script src="${basePath}/js/dataTables.bootstrap.js"></script>
 <script src="${basePath}/js/bootstrap-treeview.js"></script>
 <script src="${basePath}/js/template-web.js"></script>
+<script src="${basePath}/js/program.js"></script>
 <script>
-
-    function display_selected_node(data) {
-        console.log(data);
-        var type = data.type;
-        if (type === 0) {
-            display_level_one(data)
-        } else if (type === 1) {
-            display_level_two(data);
-        } else if (type === 2) {
-            display_content(data);
-        }
-    }
-
-    function display_level_two(data) {
-        var levelTwoHtml = template("level-two-template", data);
-        var contentNode = $("#wrapper-content");
-        contentNode.empty();
-        contentNode.append(levelTwoHtml);
-    }
-
-    function display_content(data) {
-        var result = template("content", data);
-        var contentNode = $("#wrapper-content");
-        contentNode.empty();
-        contentNode.append(result);
-    }
-
-    function display_level_one(data) {
-        var levelOneHtml = template("level-one-template", data);
-        var contentNode = $("#wrapper-content");
-        contentNode.empty();
-        contentNode.append(levelOneHtml);
-    }
-
     var data = ${programData};
     $(function () {
         var tree = $("#wrapper-menu-tree").treeview({
@@ -168,9 +185,10 @@
             color: "#4D4D4D",
             levels: 1,
             onNodeSelected: function (event, data) {
-                display_selected_node(data)
+                display_selected_node(data);
             }
         });
+        material_select();
     });
 </script>
 </body>
