@@ -18,6 +18,26 @@ body {
     font-family: 'Open Sans', sans-serif;
 }
 
+img.material-select {
+    width: 242px;
+    height: 200px;
+}
+
+div.material-item h4{
+    width:242px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    word-break:keep-all;
+}
+
+table.materialDataTables {
+    width: 100%;
+    overflow: scroll;
+}
+
+
+
 .folder-filter {
     border: 1px solid #e6e6e6;
     height: 160px;
@@ -103,7 +123,6 @@ div.folder-filter span{
     color: #fff;
 }
 
-
 .panel-up {
     float: right;
     width: 4%;
@@ -146,24 +165,25 @@ div.resource-display ol>li h6{
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    width: 75px;
+    width: 120px;
 }
 
 .resource-display li img {
-    width: 77px;
-    height: 130px;
+    width: 120px;
+    height: 160px;
 }
 
 .resource-display li {
     padding: 5px;
     margin: 5px;
+    text-align: center;
 }
 
-.sidebar-collapse
-
-.resource-display .display-active {
+.resource-display li.display-active {
+    padding: 5px;
+    margin: 5px;
     background: #286090;
-    color: #fff;
+    color: white;
 }
 
 .resource-display {
@@ -266,6 +286,10 @@ p {
 
 .panel-back {
     background-color: #F8F8F8;
+}
+
+.panel-body {
+
 }
 
 .noti-box {

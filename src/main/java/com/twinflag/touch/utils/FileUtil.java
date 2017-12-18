@@ -22,10 +22,10 @@ public class FileUtil {
     }*/
 
     public static int getType(String fileName) {
-        if (fileName.endsWith(".png") || fileName.endsWith(".jpg") ||
-                fileName.endsWith(".gif")) {
+        String lowerName = fileName.toLowerCase();
+        if (lowerName.toLowerCase().endsWith(".png") || lowerName.endsWith(".jpg") || lowerName.endsWith(".jpeg")) {
             return SourceType.IMAGE.getType();
-        } else if (fileName.endsWith(".txt")) {
+        } else if (lowerName.endsWith(".txt")) {
             return SourceType.TEXT.getType();
         } else {
             return SourceType.NONE.getType();
