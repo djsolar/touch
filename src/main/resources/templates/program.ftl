@@ -195,7 +195,11 @@
             },
             order: [[0, "desc"]],
             "processing": true,
-            "ajax": "/program/getProgramData",
+            "serverSide": true,
+            "ajax": {
+                "url": "/program/getProgramData",
+                "dataSrc": "aaData"
+            },
             "columns": [
                 {"data": "id"},
                 {"data": "programName"},

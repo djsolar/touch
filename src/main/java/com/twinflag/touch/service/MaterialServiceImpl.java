@@ -1,13 +1,14 @@
 package com.twinflag.touch.service;
 
+import com.twinflag.touch.entity.DataTableViewPage;
 import com.twinflag.touch.model.Achieve;
 import com.twinflag.touch.model.Material;
 import com.twinflag.touch.model.User;
 import com.twinflag.touch.respository.MaterialRepository;
 import com.twinflag.touch.respository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.datatables.mapping.DataTablesInput;
-import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -58,16 +59,27 @@ public class MaterialServiceImpl implements MaterialService{
     }
 
     @Override
-    public DataTablesOutput<Material> findAllMaterial(DataTablesInput dataTablesInput) {
+    public DataTableViewPage<Material> findAllMaterial(int page, int pageSize) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByUsername(userDetails.getUsername());
-        Specification<Material> programSpecification = new Specification<Material>() {
+        Specification<Material> materialSpecification = new Specification<Material>() {
             @Override
             public Predicate toPredicate(Root<Material> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 Join<Material, Achieve> join = root.join("achieve", JoinType.INNER);
                 return cb.equal(join.get("createUser").as(User.class), user);
             }
         };
-        return materialRepository.findAll(dataTablesInput, programSpecification);
+
+        PageRequest pageRequest = buildPageRequest(page, pageSize);
+        Page<Material> materialPage = materialRepository.findAll(materialSpecification, pageRequest);
+        DataTableViewPage<Material> dataTableViewPage = new DataTableViewPage<>();
+        dataTableViewPage.setAaData(materialPage.getContent());
+        dataTableViewPage.setRecordsTotal(materialPage.getTotalElements());
+        dataTableViewPage.setRecordsFiltered(materialPage.getTotalElements());
+        return dataTableViewPage;
+    }
+
+    private PageRequest buildPageRequest(int page, int pageSize) {
+        return new PageRequest(page, pageSize);
     }
 }

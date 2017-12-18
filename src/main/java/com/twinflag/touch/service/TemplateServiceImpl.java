@@ -2,6 +2,7 @@ package com.twinflag.touch.service;
 
 import com.twinflag.touch.config.Config;
 import com.twinflag.touch.entity.ContentBean;
+import com.twinflag.touch.entity.DataTableViewPage;
 import com.twinflag.touch.entity.LevelOneBean;
 import com.twinflag.touch.entity.LevelTwoBean;
 import com.twinflag.touch.model.*;
@@ -10,9 +11,7 @@ import com.twinflag.touch.respository.UserRepository;
 import com.twinflag.touch.utils.*;
 import org.dom4j.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.jpa.datatables.mapping.DataTablesInput;
-import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,9 +24,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @Transactional
@@ -59,7 +56,7 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     @Override
-    public DataTablesOutput<Program> findAllTemplate(DataTablesInput dataTablesInput) {
+    public DataTableViewPage<Program> findAllTemplate(int page, int pageSize) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByUsername(userDetails.getUsername());
         Specification<Program> programSpecification = new Specification<Program>() {
@@ -70,7 +67,12 @@ public class TemplateServiceImpl implements TemplateService {
                 return cb.and(p1, p2);
             }
         };
-        return programRepository.findAll(dataTablesInput, programSpecification);
+        Page<Program> programPage = programRepository.findAll(programSpecification, PageRequestBuilder.buildPageRequest(page, pageSize));
+        DataTableViewPage<Program> programDataTableViewPage = new DataTableViewPage<>();
+        programDataTableViewPage.setAaData(programPage.getContent());
+        programDataTableViewPage.setRecordsFiltered(programPage.getTotalElements());
+        programDataTableViewPage.setRecordsTotal(programPage.getTotalElements());
+        return programDataTableViewPage;
     }
 
     @Override

@@ -1,9 +1,8 @@
 package com.twinflag.touch.service;
 
+import com.twinflag.touch.entity.DataTableViewPage;
 import com.twinflag.touch.model.Achieve;
 import com.twinflag.touch.model.Material;
-import org.springframework.data.jpa.datatables.mapping.DataTablesInput;
-import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 
 import java.util.List;
 
@@ -15,6 +14,6 @@ public interface MaterialService {
 
     List<Material> getMaterialByAchieveAndType(Achieve achieve, Integer type);
 
-    DataTablesOutput<Material> findAllMaterial(DataTablesInput dataTablesInput);
+    DataTableViewPage<Material> findAllMaterial(int page, int pageSize);
 
 }

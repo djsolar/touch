@@ -63,19 +63,7 @@ function file_type_filter() {
 
 function upload_modal_close() {
     $("#uploadMaterial").on("hidden.bs.modal", function () {
-        var achieveId = $(".folder-active").attr("id");
-        alert(achieveId);
-        $.ajax({
-            url: "/resource/getAchieveMaterial",
-            data: {"id": achieveId},
-            success: function (data) {
-                var result = template("resource-display-template", {"data": data});
-                var resourceInfo = $(".resource-display .resource-info");
-                resourceInfo.empty();
-                resourceInfo.append(result);
-                add_material_click();
-            }
-        })
+        get_achieve();
     });
 }
 
@@ -128,18 +116,7 @@ function add_achieve_click() {
     $("ol#achieve_manage li").click(function () {
         $(this).parent().children().removeClass("folder-active");
         $(this).addClass("folder-active");
-        var achieveId = $(this).attr("id");
-        $.ajax({
-            url: "/resource/getAchieveMaterial",
-            data: {"id": achieveId},
-            success: function (data) {
-                var result = template("resource-display-template", {"data": data});
-                var resourceInfo = $(".resource-display .resource-info");
-                resourceInfo.empty();
-                resourceInfo.append(result);
-                add_material_click();
-            }
-        })
+        get_achieve();
     });
 }
 
@@ -170,6 +147,9 @@ function delete_achieve() {
 
 function get_achieve() {
     var achieveId = $("li.folder-active").attr("id");
+    if (typeof(achieveId) === 'undefined') {
+        return;
+    }
     $.ajax({
         url: "/resource/getAchieveMaterial",
         data: {"id": achieveId},

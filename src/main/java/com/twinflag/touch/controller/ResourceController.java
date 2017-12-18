@@ -1,26 +1,20 @@
 package com.twinflag.touch.controller;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.twinflag.touch.config.Config;
+import com.twinflag.touch.entity.DataTableViewPage;
 import com.twinflag.touch.entity.FileMeta;
 import com.twinflag.touch.entity.MaterialLine;
 import com.twinflag.touch.model.Achieve;
 import com.twinflag.touch.model.Material;
-import com.twinflag.touch.model.Program;
 import com.twinflag.touch.service.AchieveService;
 import com.twinflag.touch.service.MaterialService;
 import com.twinflag.touch.utils.FileUtil;
 import com.twinflag.touch.utils.MD5Util;
 import com.twinflag.touch.utils.SourceType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.datatables.mapping.DataTablesInput;
-import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -59,23 +52,29 @@ public class ResourceController {
         return "resource";
     }
 
-    @JsonView(DataTablesOutput.View.class)
     @RequestMapping(value = "/getMaterialData", method = RequestMethod.GET)
     @ResponseBody
-    public DataTablesOutput<Material> getMaterialData(@Valid DataTablesInput data , BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            bindingResult.getAllErrors().stream().forEach((error) -> {
-                System.out.println(error.getDefaultMessage());
-            });
+    public DataTableViewPage<MaterialLine> getMaterialData(HttpServletRequest request) {
+
+        int start = Integer.parseInt(request.getParameter("start"));
+        int length = Integer.parseInt(request.getParameter("length"));
+        int page = start / length;
+        int pageSize = length * 2;
+        DataTableViewPage<Material> dataTableViewPage = materialService.findAllMaterial(page, pageSize);
+        return transferMaterial2MaterialLine(dataTableViewPage);
+    }
+
+    private DataTableViewPage<MaterialLine> transferMaterial2MaterialLine(DataTableViewPage<Material> dataTableViewPage) {
+        DataTableViewPage<MaterialLine> materialLineDataTableViewPage = new DataTableViewPage<>();
+        if (dataTableViewPage.getRecordsTotal() % 2 == 0) {
+            materialLineDataTableViewPage.setRecordsTotal(dataTableViewPage.getRecordsTotal() / 2);
+            materialLineDataTableViewPage.setRecordsFiltered(dataTableViewPage.getRecordsTotal() / 2);
+        } else {
+            materialLineDataTableViewPage.setRecordsTotal(dataTableViewPage.getRecordsTotal() / 2 + 1);
+            materialLineDataTableViewPage.setRecordsFiltered(dataTableViewPage.getRecordsTotal() / 2 + 1);
         }
-        /*DataTablesOutput<Material> materialOutput = materialService.findAllMaterial(data);
-        List<Material> materials = materialOutput.getData();
+        List<Material> materials = dataTableViewPage.getAaData();
         List<MaterialLine> materialLines = new ArrayList<>();
-        DataTablesOutput<MaterialLine> materialLineOutput = new DataTablesOutput<>();
-        materialLineOutput.setDraw(materialOutput.getDraw());
-        materialLineOutput.setRecordsFiltered(materialOutput.getRecordsFiltered());
-        materialLineOutput.setError(materialLineOutput.getError());
-        materialLineOutput.setRecordsTotal(materialLineOutput.getRecordsTotal());
         int size = materials.size();
         for(int i = 0; i < size; i += 2) {
             MaterialLine ml = new MaterialLine();
@@ -85,9 +84,8 @@ public class ResourceController {
             }
             materialLines.add(ml);
         }
-        materialLineOutput.setData(materialLines);*/
-        DataTablesOutput<Material> materialDataTablesOutput = materialService.findAllMaterial(data);
-        return materialDataTablesOutput;
+        materialLineDataTableViewPage.setAaData(materialLines);
+        return materialLineDataTableViewPage;
     }
 
     @RequestMapping(value = "/addAchieve", method = RequestMethod.POST)

@@ -1,21 +1,19 @@
 package com.twinflag.touch.controller;
 
-import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.twinflag.touch.entity.DataTableViewPage;
 import com.twinflag.touch.model.Program;
-import com.twinflag.touch.respository.ProgramRepository;
 import com.twinflag.touch.service.TemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.datatables.mapping.DataTablesInput;
-import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/template")
@@ -29,11 +27,17 @@ public class TemplateController {
         return "template";
     }
 
-    @JsonView(DataTablesOutput.View.class)
     @RequestMapping(value = "/getTemplateData", method = RequestMethod.GET)
     @ResponseBody
-    public DataTablesOutput<Program> getTemplateData(@Valid DataTablesInput data , BindingResult bindingResult) {
-        return templateService.findAllTemplate(data);
+    public String getTemplateData(HttpServletRequest request) throws JsonProcessingException {
+        int start = Integer.parseInt(request.getParameter("start"));
+        int pageSize = Integer.parseInt(request.getParameter("length"));
+        System.out.println("start = " + start + ", pageSize = " + pageSize);
+        int page = start / pageSize;
+        DataTableViewPage<Program> t = templateService.findAllTemplate(page, pageSize);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String message = objectMapper.writeValueAsString(t);
+        return message;
     }
 
     @RequestMapping("/delete")

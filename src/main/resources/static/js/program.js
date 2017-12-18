@@ -43,7 +43,7 @@ function material_select() {
         $('#materialDataTables').DataTable({
             "pagingType": "simple_numbers",//设置分页控件的模式
             searching: false,//屏蔽datatales的查询框
-            aLengthMenu: [10],//设置一页展示10条记录
+            aLengthMenu: [5],//设置一页展示10条记录
             "bLengthChange": false,//屏蔽tables的一页展示多少条记录的下拉列表
             info: false,
             "oLanguage": {  //对表格国际化
@@ -62,21 +62,17 @@ function material_select() {
 
                 }
             },
-            "iDisplayLength": 5,
+            "iDisplayLength": 3,
             "processing": false,
             "bAutoWidth": false,
-            "ajax": "/resource/getMaterialData",
+            "serverSide": true,
+            "ajax": {
+                "url": "/resource/getMaterialData",
+                "dataSrc": "aaData"
+            },
             "columns": [
-                {"data": "macName",
-                    render: function (data, type, row) {
-                        console.log("data = " + data);
-                        console.log("type = " + type);
-                        console.log(row);
-                        var result = template("material-list", {"macName": data});
-                        console.log(result);
-                        return result;
-                    }}/*,
-                {"data": "second",
+                {
+                    "data": "first",
                     render: function (data, type, row) {
                         console.log("data = " + data);
                         console.log("type = " + type);
@@ -84,7 +80,19 @@ function material_select() {
                         var result = template("material-list", {"material": data});
                         console.log(result);
                         return result;
-                    }}*/
+                    }
+                },
+                {
+                    "data": "second",
+                    render: function (data, type, row) {
+                        console.log("data = " + data);
+                        console.log("type = " + type);
+                        console.log(row);
+                        var result = template("material-list", {"material": data});
+                        console.log(result);
+                        return result;
+                    }
+                }
 
             ]
         });

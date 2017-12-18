@@ -1,8 +1,7 @@
 package com.twinflag.touch.service;
 
+import com.twinflag.touch.entity.DataTableViewPage;
 import com.twinflag.touch.model.Program;
-import org.springframework.data.jpa.datatables.mapping.DataTablesInput;
-import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 
 public interface ProgramService {
 
@@ -36,5 +35,5 @@ public interface ProgramService {
 
     void findProgram(Program program);
 
-    DataTablesOutput<Program> findAll(DataTablesInput input);
+    DataTableViewPage<Program> findAll(int page, int pageSize);
 }

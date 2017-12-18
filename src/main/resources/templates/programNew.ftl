@@ -32,15 +32,51 @@
             <a href="/logout" class="btn btn-danger square-btn-adjust">退出</a>
         </div>
     </nav>
-<#--<div id="wrapper-head">
-    <button class="btn btn-primary ">返回</button>
-    <button class="btn btn-primary">保存</button>
-</div>-->
+    <div id="wrapper-menu" class="row">
+        <div class="col-md-3 col-md-offset-1">
+            <div class="btn-group" role="group" aria-label="...">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        节&nbsp;目
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">保存</a></li>
+                        <li><a href="#">发布</a></li>
+                        <li><a href="#">返回</a></li>
+                    </ul>
+                </div>
+                <button type="button" class="btn btn-primary"><span class="fa fa-plus"></span> 添加</button>
+                <button type="button" class="btn btn-primary"><span class="fa fa-long-arrow-up"></span> 上移</button>
+                <button type="button" class="btn btn-primary"><span class="fa fa-long-arrow-down"></span> 下移</button>
+                <button type="button" class="btn btn-danger"><span class="fa fa-trash"></span> 删除</button>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="btn-group" role="group" aria-label="...">
+                <div class="btn-group" role="group" aria-label="..." style="margin-left: 20px; margin-right: 20px;">
+                    <button type="button" class="btn btn-primary"><span class="fa fa-save"></span> 保存</button>
+                    <button type="button" class="btn btn-primary"><span class="fa fa-plus"></span> 添加</button>
+                    <button type="button" class="btn btn-primary"><span class="fa fa-long-arrow-up"></span> 上移</button>
+                    <button type="button" class="btn btn-primary"><span class="fa fa-long-arrow-down"></span> 下移</button>
+                    <button type="button" class="btn btn-primary"><span class="fa fa-eye"></span> 查看</button>
+                    <button type="button" class="btn btn-primary"><span class="fa fa-edit"></span> 编辑</button>
+
+                </div>
+
+                <div class="btn-group" role="group" aria-label="...">
+                    <button type="button" class="btn btn-danger"><span class="fa fa-refresh"></span> 刷新</button>
+                    <button type="button" class="btn btn-danger"><span class="fa fa-trash"></span> 删除</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
     <div id="wrapper-inner" class="row">
         <div id="wrapper-menu-tree" class="col-md-3 col-md-offset-1">
 
         </div>
-
         <div id="wrapper-content" class="col-md-7">
 
         </div>
@@ -122,8 +158,6 @@
             {{else if data.type == 2}}
             <li class="content-txt">
                 <label>{{value}}</label>
-                <button class="btn btn-success">查看</button>
-                <button class="btn btn-primary">编辑</button>
             </li>
             {{/if}}
             {{/each}}
@@ -147,8 +181,6 @@
         {{if data.url }}
         <label style="margin-top: 20px;">文件路径 </label>
         <p>{{data.url}}
-            <button class="btn btn-success">查看</button>
-            <button class="btn btn-primary">编辑</button>
         </p>
         {{/if}}
     </div>
@@ -162,9 +194,9 @@
     <div class="row material-item">
         <div class="col-sm-6 col-md-4">
             <div>
-                <img class="material-select" src="/{{macName}}">
+                <img class="material-select" src="/{{material.macName}}">
                 <div class="caption">
-                    <h4>{{macName}}</h4>
+                    <h4>{{material.originName}}</h4>
                 </div>
             </div>
         </div>

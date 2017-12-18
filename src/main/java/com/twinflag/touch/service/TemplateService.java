@@ -1,12 +1,9 @@
 package com.twinflag.touch.service;
 
+import com.twinflag.touch.entity.DataTableViewPage;
 import com.twinflag.touch.model.Program;
-import com.twinflag.touch.model.User;
-import org.springframework.data.jpa.datatables.mapping.DataTablesInput;
-import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 public interface TemplateService {
@@ -17,7 +14,7 @@ public interface TemplateService {
 
     Program findTemplate(Integer id);
 
-    DataTablesOutput<Program> findAllTemplate(DataTablesInput dataTablesInput);
+    DataTableViewPage<Program> findAllTemplate(int page, int pageSize);
 
     boolean deleteTemplate(Integer id);
 

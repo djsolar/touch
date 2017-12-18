@@ -1,11 +1,8 @@
 package com.twinflag.touch.model;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -20,7 +17,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @JsonView(DataTablesOutput.View.class)
     private String username;
 
     private String password;

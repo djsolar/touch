@@ -1,9 +1,9 @@
 package com.twinflag.touch.controller;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.twinflag.touch.entity.ContentBean;
+import com.twinflag.touch.entity.DataTableViewPage;
 import com.twinflag.touch.entity.LevelOneBean;
 import com.twinflag.touch.entity.LevelTwoBean;
 import com.twinflag.touch.model.*;
@@ -11,14 +11,11 @@ import com.twinflag.touch.service.ProgramService;
 import com.twinflag.touch.service.TemplateService;
 import com.twinflag.touch.tree.TreeLevel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.datatables.mapping.DataTablesInput;
-import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -56,9 +53,10 @@ public class ProgramController {
 
     @RequestMapping(value = "/getProgramData", method = RequestMethod.GET)
     @ResponseBody
-    @JsonView({DataTablesOutput.View.class})
-    public DataTablesOutput<Program> getProgramData(@Valid DataTablesInput input, BindingResult bindingResult) {
-        return programService.findAll(input);
+    public DataTableViewPage<Program> getProgramData(HttpServletRequest request) {
+        int page = 0;
+        int pageSize = 10;
+        return programService.findAll(page, pageSize);
     }
 
     /**
