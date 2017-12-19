@@ -17,12 +17,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,14 +119,9 @@ public class TemplateServiceImpl implements TemplateService {
             LevelOne levelOne = new LevelOne();
             String normalPicPath = "/" + directoryName + "/" + lob.getNormalPic();
             Material normalPic = transferMaterial(normalPicPath);
-            /*Source normalPic = new Source();
-            normalPic.setRelativePath();
-            normalPic.setAbsolutePath("/" + directoryName + "/" + lob.getNormalPic());*/
             levelOne.setNormalPic(normalPic);
-
-            Source selectedPic = new Source();
-            selectedPic.setRelativePath(lob.getSelectedPic());
-            selectedPic.setAbsolutePath("/" + directoryName + "/" + lob.getSelectedPic());
+            String selectedPicPath = "/" + directoryName + "/" + lob.getSelectedPic();
+            Material selectedPic = transferMaterial(selectedPicPath);
 
             levelOne.setSelectedPic(selectedPic);
             levelOne.setUrl(lob.getUrl());
@@ -136,7 +134,11 @@ public class TemplateServiceImpl implements TemplateService {
                 levelTwo.setLabel(ltb.getLabel());
                 levelTwo.setTitle(ltb.getTitle());
                 levelTwo.setMany(ltb.isMany());
-                levelTwo.setUrl(ltb.getUrl());
+                if (!StringUtils.isEmpty(ltb.getUrl())) {
+                    String urlPath = "/" + directoryName + "/" +ltb.getUrl();
+                    Material urlMaterial = transferMaterial(urlPath);
+                    levelTwo.setUrl(urlMaterial);
+                }
                 levelTwo.setLevelOne(levelOne);
                 List<ContentBean> contentBeans = ltb.getContentBeans();
                 List<Content> contents = new ArrayList<>();
@@ -148,15 +150,13 @@ public class TemplateServiceImpl implements TemplateService {
                         content.setTitle(contentBean.getTitle());
                         content.setLevelTwo(levelTwo);
                         List<String> paths = contentBean.getPaths();
-                        List<Source> sources = new ArrayList<>();
+                        List<Material> materials = new ArrayList<>();
                         for (String path : paths) {
-                            Source source = new Source();
-                            source.setRelativePath(path);
-                            source.setAbsolutePath("/" + directoryName + "/" + path);
-                            source.setContent(content);
-                            sources.add(source);
+                            String materialPath = "/" + directoryName + "/" + path;
+                            Material material = transferMaterial(materialPath);
+                            materials.add(material);
                         }
-                        content.setSources(sources);
+                        content.setMaterials(materials);
                         contents.add(content);
                     }
                 }
@@ -171,7 +171,16 @@ public class TemplateServiceImpl implements TemplateService {
         return program;
     }
 
-    private Material transferMaterial(String filePath) {
-
+    private Material transferMaterial(String filePath) throws FileNotFoundException {
+        File file = new File(filePath);
+        String originName = file.getName();
+        String md5 = MD5Util.getMd5ByFile(file);
+        String suffix = originName.substring(originName.lastIndexOf('.'));
+        String md5Name = md5 + suffix;
+        String path = config.getUploadMaterialPath() + "/" + md5Name;
+        File destFile = new File(path);
+        if (!destFile.exists()) {
+            file.renameTo(new File(path));
+        }
     }
 }
