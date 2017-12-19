@@ -21,11 +21,11 @@ public class LevelOne {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "normal_pic")
-    private Source normalPic;
+    private Material normalPic;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "selected_pic")
-    private Source selectedPic;
+    private Material selectedPic;
 
     private String url;
 

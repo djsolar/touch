@@ -31,9 +31,22 @@ div.material-item h4{
     word-break:keep-all;
 }
 
+.item-active{
+    background: #616161;
+}
+
 table.materialDataTables {
     width: 100%;
     overflow: scroll;
+}
+
+#level-two p {
+    padding: 10px 0;
+    margin-top: 10px;
+}
+
+#content label {
+    margin: 10px 0;
 }
 
 

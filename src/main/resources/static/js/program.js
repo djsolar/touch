@@ -3,18 +3,44 @@ function display_selected_node(data) {
     var type = data.type;
     if (type === 0) {
         display_level_one(data)
+        add_level_one_click();
     } else if (type === 1) {
         display_level_two(data);
+        add_level_two_click();
     } else if (type === 2) {
         display_content(data);
+        add_content_click();
     }
+    content_edit();
 }
 
 function add_level_one_click() {
-    $("#level-one .display-img>img").click(function () {
-        $("#selectMaterial").modal("show");
-    })
+    $("#level-one div.display-img").click(function () {
+        $(this).siblings().removeClass("item-active");
+        $(this).addClass("item-active");
+    });
 }
+
+function add_level_two_click() {
+    $("#level-two p").click(function () {
+        $(this).siblings().removeClass("item-active");
+        $(this).addClass("item-active");
+    });
+}
+
+function add_content_click() {
+    $("#content ul li").click(function () {
+        $(this).siblings().removeClass("item-active");
+        $(this).addClass("item-active");
+    });
+}
+
+function content_edit() {
+    $("button#edit_content").click(function () {
+        $("#selectMaterial").modal("show");
+    });
+}
+
 
 function display_level_two(data) {
     var levelTwoHtml = template("level-two-template", data);
@@ -38,9 +64,15 @@ function display_level_one(data) {
     add_level_one_click()
 }
 
+var table;
 function material_select() {
     $("#selectMaterial").on("show.bs.modal", function () {
-        $('#materialDataTables').DataTable({
+
+        if (typeof(table) !== "undefined") {
+            console.log("destroy");
+            table.destroy();
+        }
+        table = $('#materialDataTables').DataTable({
             "pagingType": "simple_numbers",//设置分页控件的模式
             searching: false,//屏蔽datatales的查询框
             aLengthMenu: [5],//设置一页展示10条记录
@@ -96,5 +128,5 @@ function material_select() {
 
             ]
         });
-    })
+    });
 }

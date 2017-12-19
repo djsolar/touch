@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="${basePath}/css/font-awesome.css">
     <link rel="stylesheet" type="text/css" href="${basePath}/css/bootstrap-treeview.css">
     <link rel="stylesheet" href="${basePath}/css/common.css">
+    <link rel="stylesheet" href="${basePath}/css/normalize.css">
 </head>
 <body>
 <div id="wrapper-outer">
@@ -61,7 +62,7 @@
                     <button type="button" class="btn btn-primary"><span class="fa fa-long-arrow-up"></span> 上移</button>
                     <button type="button" class="btn btn-primary"><span class="fa fa-long-arrow-down"></span> 下移</button>
                     <button type="button" class="btn btn-primary"><span class="fa fa-eye"></span> 查看</button>
-                    <button type="button" class="btn btn-primary"><span class="fa fa-edit"></span> 编辑</button>
+                    <button id="edit_content" type="button" class="btn btn-primary"><span class="fa fa-edit"></span> 编辑</button>
 
                 </div>
 
@@ -120,12 +121,12 @@
 <script id="level-one-template" type="text/html">
     <div id="level-one" class="row">
         <div class="display-img col-md-3 col-md-offset-2">
-            <img src="{{data.normalPic}}">
+            <img src="{{data.normalPic}}" mediaType="0">
             <h3>未选中图片</h3>
         </div>
 
         <div class="display-img col-md-3 col-md-offset-2">
-            <img src="{{data.selectedPic}}" onclick="add_level_one_click()">
+            <img src="{{data.selectedPic}}" mediaType="0">
             <h3>选中图片</h3>
         </div>
     </div>
@@ -152,7 +153,7 @@
             {{if data.type == 1}}
             <li class="content-img">
                 <div>
-                    <img src="{{value}}" alt="{{value}}">
+                    <img src="{{value}}" alt="{{value}}" mediaType="0">
                 </div>
             </li>
             {{else if data.type == 2}}
@@ -180,8 +181,7 @@
         {{/if}}
         {{if data.url }}
         <label style="margin-top: 20px;">文件路径 </label>
-        <p>{{data.url}}
-        </p>
+        <p mediaType="1">{{data.url}}</p>
         {{/if}}
     </div>
 </script>

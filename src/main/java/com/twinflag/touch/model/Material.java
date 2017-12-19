@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "t_material")
@@ -30,8 +31,11 @@ public class Material {
 
     private Integer type; // 0: 图片 1：文本文件
 
-    @ManyToOne
-    @JoinColumn(name = "achieve_id")
+    @ManyToMany(mappedBy = "materials")
     @JsonIgnore
-    private Achieve achieve;
+    private List<Achieve> achieves;
+
+    @ManyToMany(mappedBy = "materials")
+    @JsonIgnore
+    private List<Content> contents;
 }

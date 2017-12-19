@@ -114,9 +114,11 @@ public class TemplateServiceImpl implements TemplateService {
         List<LevelOne> levelOnes = new ArrayList<>();
         for (LevelOneBean lob : levelOneBeans) {
             LevelOne levelOne = new LevelOne();
-            Source normalPic = new Source();
-            normalPic.setRelativePath(lob.getNormalPic());
-            normalPic.setAbsolutePath("/" + directoryName + "/" + lob.getNormalPic());
+            String normalPicPath = "/" + directoryName + "/" + lob.getNormalPic();
+            Material normalPic = transferMaterial(normalPicPath);
+            /*Source normalPic = new Source();
+            normalPic.setRelativePath();
+            normalPic.setAbsolutePath("/" + directoryName + "/" + lob.getNormalPic());*/
             levelOne.setNormalPic(normalPic);
 
             Source selectedPic = new Source();
@@ -167,5 +169,9 @@ public class TemplateServiceImpl implements TemplateService {
         }
         program.setLevelOnes(levelOnes);
         return program;
+    }
+
+    private Material transferMaterial(String filePath) {
+
     }
 }

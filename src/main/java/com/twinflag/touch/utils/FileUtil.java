@@ -1,5 +1,7 @@
 package com.twinflag.touch.utils;
 
+import com.twinflag.touch.model.Material;
+
 import java.io.File;
 import java.io.FileOutputStream;
 
@@ -16,10 +18,6 @@ public class FileUtil {
         out.flush();
         out.close();
     }
-
-    /*public static void main(String[] args) {
-        File file = new File("/Users/zhouyiran")
-    }*/
 
     public static int getType(String fileName) {
         String lowerName = fileName.toLowerCase();
