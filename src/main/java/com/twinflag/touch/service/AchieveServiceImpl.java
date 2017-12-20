@@ -23,11 +23,11 @@ public class AchieveServiceImpl implements AchieveService {
     private UserRepository userRepository;
 
     @Override
-    public boolean saveAchieve(Achieve achieve) {
+    public Achieve saveAchieve(Achieve achieve) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByUsername(userDetails.getUsername());
         achieve.setCreateUser(user);
-        return achieveRepository.save(achieve) != null;
+        return achieveRepository.save(achieve);
     }
 
     @Override

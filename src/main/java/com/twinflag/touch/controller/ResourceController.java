@@ -120,7 +120,7 @@ public class ResourceController {
     @ResponseBody
     public List<Material> getAchieveMaterial(Integer id) {
         Achieve achieve = achieveService.findAchieve(id);
-        List<Material> materials = achieve.getMaterials();
+        List<Material> materials = new ArrayList<>(achieve.getMaterials());
         return materials;
     }
 
@@ -179,8 +179,6 @@ public class ResourceController {
                     material = new Material();
                     material.setOriginName(fileName);
                     material.setType(type);
-                    List<Achieve> achieves = new ArrayList<>();
-                    achieves.add(achieve);
                     String md5Path = FileUtil.getMd5Path(filePath, md5Name);
                     FileCopyUtils.copy(mpf.getBytes(), new FileOutputStream(md5Path));
                     File file = new File(md5Path);
@@ -200,7 +198,8 @@ public class ResourceController {
             }
             //2.4 add to files
         }
-        materialService.saveMaterials(materials);
+        achieve.getMaterials().addAll(materials);
+        achieveService.saveAchieve(achieve);
         // result will be like this
         // [{"fileName":"app_engine-85x77.png","fileSize":"8 Kb","fileType":"image/png"},...]
         System.out.println("size = " + files.size());

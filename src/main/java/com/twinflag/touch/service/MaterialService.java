@@ -18,4 +18,5 @@ public interface MaterialService {
 
     Material findMaterialByMacName(String md5Name);
 
+    Material saveMaterial(Material material);
 }

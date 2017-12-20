@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -116,6 +117,7 @@ public class TemplateServiceImpl implements TemplateService {
             achieve.setName("其他");
             achieve.setAuthority(0);
             achieve.setCreateDate(new Date());
+            achieve.setMaterials(new HashSet<>());
         }
 
         String srcPath = filePath + fileName;
@@ -135,11 +137,12 @@ public class TemplateServiceImpl implements TemplateService {
         for (LevelOneBean lob : levelOneBeans) {
             LevelOne levelOne = new LevelOne();
             String normalPicPath = unZipPath + "/" + lob.getNormalPic();
-            Material normalPic = transferMaterial(normalPicPath, achieve);
+            Material normalPic = transferMaterial(normalPicPath);
+            achieve.getMaterials().add(normalPic);
             levelOne.setNormalPic(normalPic);
             String selectedPicPath = unZipPath + "/" + lob.getSelectedPic();
-            Material selectedPic = transferMaterial(selectedPicPath, achieve);
-
+            Material selectedPic = transferMaterial(selectedPicPath);
+            achieve.getMaterials().add(selectedPic);
             levelOne.setSelectedPic(selectedPic);
             levelOne.setUrl(lob.getUrl());
             levelOne.setProgram(program);
@@ -153,7 +156,8 @@ public class TemplateServiceImpl implements TemplateService {
                 levelTwo.setMany(ltb.isMany());
                 if (!StringUtils.isEmpty(ltb.getUrl())) {
                     String urlPath = unZipPath + "/" +ltb.getUrl();
-                    Material urlMaterial = transferMaterial(urlPath, achieve);
+                    Material urlMaterial = transferMaterial(urlPath);
+                    achieve.getMaterials().add(urlMaterial);
                     levelTwo.setUrl(urlMaterial);
                 }
                 levelTwo.setLevelOne(levelOne);
@@ -170,10 +174,11 @@ public class TemplateServiceImpl implements TemplateService {
                         List<Material> materials = new ArrayList<>();
                         for (String path : paths) {
                             String materialPath = unZipPath + "/" + path;
-                            Material material = transferMaterial(materialPath, achieve);
+                            Material material = transferMaterial(materialPath);
                             materials.add(material);
                         }
                         content.setMaterials(materials);
+                        achieve.getMaterials().addAll(materials);
                         contents.add(content);
                     }
                 }
@@ -185,10 +190,11 @@ public class TemplateServiceImpl implements TemplateService {
             levelOnes.add(levelOne);
         }
         program.setLevelOnes(levelOnes);
+        achieveService.saveAchieve(achieve);
         return program;
     }
 
-    private Material transferMaterial(String filePath, Achieve achieve) {
+    private Material transferMaterial(String filePath) {
         File file = new File(filePath);
         String originName = file.getName();
         String md5;
@@ -196,7 +202,7 @@ public class TemplateServiceImpl implements TemplateService {
             md5 = MD5Util.getMd5ByFile(file);
             String suffix = originName.substring(originName.lastIndexOf('.'));
             String md5Name = md5 + suffix;
-            String path = config.getUploadMaterialPath() + "/" + md5Name;
+            String path = config.getUploadMaterialPath() + md5Name;
             Material material = materialService.findMaterialByMacName(md5Name);
             if (material == null) {
                 int type = FileUtil.getType(originName);
@@ -205,19 +211,12 @@ public class TemplateServiceImpl implements TemplateService {
                 material.setOriginName(originName);
                 material.setPath(path);
                 material.setType(type);
-                List<Achieve> achieves = new ArrayList<>();
-                achieves.add(achieve);
                 File destFile = new File(path);
                 if (!destFile.exists()) {
                     boolean isSuccess = file.renameTo(new File(path));
                     if (isSuccess) {
                         System.out.println("移动文件夹成功");
                     }
-                }
-            } else {
-                List<Achieve> achieves = material.getAchieves();
-                if (!achieves.contains(achieve)) {
-                    achieves.add(achieve);
                 }
             }
             return material;

@@ -58,7 +58,7 @@ public class MaterialServiceImpl implements MaterialService{
         Specification<Material> materialSpecification = new Specification<Material>() {
             @Override
             public Predicate toPredicate(Root<Material> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                Join<Material, Achieve> join = root.join("achieve", JoinType.INNER);
+                Join<Material, Achieve> join = root.join("achieves", JoinType.INNER);
                 return cb.equal(join.get("createUser").as(User.class), user);
             }
         };
@@ -75,6 +75,18 @@ public class MaterialServiceImpl implements MaterialService{
     @Override
     public Material findMaterialByMacName(String md5Name) {
         return materialRepository.findMaterialByMacName(md5Name);
+    }
+
+    @Override
+    public Material saveMaterial(Material material) {
+        if (material == null)
+            return null;
+        Material material1 = materialRepository.findMaterialByMacName(material.getMacName());
+        if (material1 != null) {
+            return material1;
+        }
+        materialRepository.save(material);
+        return materialRepository.findMaterialByMacName(material.getMacName());
     }
 
     private PageRequest buildPageRequest(int page, int pageSize) {

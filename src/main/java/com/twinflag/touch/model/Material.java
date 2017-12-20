@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "t_material")
@@ -33,9 +35,24 @@ public class Material {
 
     @ManyToMany(mappedBy = "materials")
     @JsonIgnore
-    private List<Achieve> achieves;
+    private Set<Achieve> achieves;
 
     @ManyToMany(mappedBy = "materials")
     @JsonIgnore
     private List<Content> contents;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Material material = (Material) o;
+        return Objects.equals(macName, material.macName);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(super.hashCode(), macName);
+    }
 }

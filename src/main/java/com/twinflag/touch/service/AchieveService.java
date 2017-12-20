@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface AchieveService {
 
-    boolean saveAchieve(Achieve achieve);
+    Achieve saveAchieve(Achieve achieve);
 
     List<Achieve> findAll();
 

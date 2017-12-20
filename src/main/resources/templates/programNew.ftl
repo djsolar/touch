@@ -37,7 +37,8 @@
         <div class="col-md-3 col-md-offset-1">
             <div class="btn-group" role="group" aria-label="...">
                 <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
                         节&nbsp;目
                         <span class="caret"></span>
                     </button>
@@ -60,9 +61,11 @@
                     <button type="button" class="btn btn-primary"><span class="fa fa-save"></span> 保存</button>
                     <button type="button" class="btn btn-primary"><span class="fa fa-plus"></span> 添加</button>
                     <button type="button" class="btn btn-primary"><span class="fa fa-long-arrow-up"></span> 上移</button>
-                    <button type="button" class="btn btn-primary"><span class="fa fa-long-arrow-down"></span> 下移</button>
+                    <button type="button" class="btn btn-primary"><span class="fa fa-long-arrow-down"></span> 下移
+                    </button>
                     <button type="button" class="btn btn-primary"><span class="fa fa-eye"></span> 查看</button>
-                    <button id="edit_content" type="button" class="btn btn-primary"><span class="fa fa-edit"></span> 编辑</button>
+                    <button id="edit_content" type="button" class="btn btn-primary"><span class="fa fa-edit"></span> 编辑
+                    </button>
 
                 </div>
 
@@ -121,12 +124,12 @@
 <script id="level-one-template" type="text/html">
     <div id="level-one" class="row">
         <div class="display-img col-md-3 col-md-offset-2">
-            <img src="{{data.normalPic}}" mediaType="0">
+            <img src="/{{data.normalPic}}" mediaType="0">
             <h3>未选中图片</h3>
         </div>
 
         <div class="display-img col-md-3 col-md-offset-2">
-            <img src="{{data.selectedPic}}" mediaType="0">
+            <img src="/{{data.selectedPic}}" mediaType="0">
             <h3>选中图片</h3>
         </div>
     </div>
@@ -153,7 +156,7 @@
             {{if data.type == 1}}
             <li class="content-img">
                 <div>
-                    <img src="{{value}}" alt="{{value}}" mediaType="0">
+                    <img src="/{{value}}" alt="{{value}}" mediaType="0">
                 </div>
             </li>
             {{else if data.type == 2}}
@@ -191,6 +194,7 @@
         <img class="material-select" src="/{{material.macName}}">
         <h4>{{material.originName}}</h4>
     </div>-->
+    {{if material }}
     <div class="row material-item">
         <div class="col-sm-6 col-md-4">
             <div>
@@ -200,6 +204,8 @@
                 </div>
             </div>
         </div>
+    </div>
+    {{/if}}
 </script>
 
 <script src="/webjars/jquery/3.2.1/jquery.min.js"></script>

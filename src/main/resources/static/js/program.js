@@ -101,7 +101,7 @@ function material_select() {
             "ajax": {
                 "url": "/resource/getMaterialData",
                 "dataSrc": "aaData"
-            },
+            },"dom": 'rt<"#pBottom"p>',
             "columns": [
                 {
                     "data": "first",

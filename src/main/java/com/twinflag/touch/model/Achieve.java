@@ -32,10 +32,10 @@ public class Achieve implements Serializable{
 
     private int authority; // 0：私有 1：共享
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "t_achieve_material", joinColumns = @JoinColumn(name = "achieve_id"),
             inverseJoinColumns = @JoinColumn(name = "material_id"))
-    private List<Material> materials;
+    private Set<Material> materials;
 
     @Override
     public boolean equals(Object o) {

@@ -95,7 +95,9 @@ public class ProgramController {
                 levelTwoBean.setLabel(levelTwo.getLabel());
                 levelTwoBean.setTitle(levelTwo.getTitle());
                 levelTwoBean.setMany(levelTwo.isMany());
-                levelTwoBean.setUrl(levelTwo.getUrl().getMacName());
+                if (levelTwo.getUrl() != null) {
+                    levelTwoBean.setUrl(levelTwo.getUrl().getMacName());
+                }
                 TreeLevel treeLevelTwo = new TreeLevel();
                 treeLevelTwo.setText(levelTwo.getLabel());
                 treeLevelTwo.setType(1);
