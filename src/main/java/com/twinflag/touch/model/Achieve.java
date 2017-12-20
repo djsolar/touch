@@ -36,4 +36,22 @@ public class Achieve implements Serializable{
     @JoinTable(name = "t_achieve_material", joinColumns = @JoinColumn(name = "achieve_id"),
             inverseJoinColumns = @JoinColumn(name = "material_id"))
     private List<Material> materials;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Achieve)) return false;
+        if (!super.equals(o)) return false;
+
+        Achieve achieve = (Achieve) o;
+
+        return getId().equals(achieve.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + getId().hashCode();
+        return result;
+    }
 }

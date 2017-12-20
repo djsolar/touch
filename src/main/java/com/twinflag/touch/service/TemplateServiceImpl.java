@@ -27,6 +27,7 @@ import javax.persistence.criteria.Root;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -41,6 +42,12 @@ public class TemplateServiceImpl implements TemplateService {
 
     @Autowired
     private ProgramRepository programRepository;
+
+    @Autowired
+    private AchieveService achieveService;
+
+    @Autowired
+    private MaterialService materialService;
 
     @Override
     public void saveTemplate(Program program) {
@@ -99,10 +106,22 @@ public class TemplateServiceImpl implements TemplateService {
 
 
     private Program transferEntityToModal(String fileName, String filePath) throws DocumentException {
+
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findByUsername(userDetails.getUsername());
+        Achieve achieve = achieveService.findAchieveByNameAndCreateUserAndAuthority("其他", user, 0);
+        if (achieve == null) {
+            achieve = new Achieve();
+            achieve.setCreateUser(user);
+            achieve.setName("其他");
+            achieve.setAuthority(0);
+            achieve.setCreateDate(new Date());
+        }
+
         String srcPath = filePath + fileName;
         String directoryName = fileName.replace(".zip", "");
         String unZipPath = filePath + directoryName;
-        String menuPath = unZipPath + "//" + Constant.MENU_FILE_NAME;
+        String menuPath = unZipPath + "/" + Constant.MENU_FILE_NAME;
         ParseUtils parseUtils = new ParseUtils();
         List<LevelOneBean> levelOneBeans = parseUtils.parseMenu(menuPath);
         Program program = new Program();
@@ -110,18 +129,16 @@ public class TemplateServiceImpl implements TemplateService {
         program.setProgramName(directoryName);
         program.setSourcePath(unZipPath);
         program.setZipPath(srcPath);
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findByUsername(userDetails.getUsername());
         program.setCreateUser(user);
         program.setUpdateUser(user);
         List<LevelOne> levelOnes = new ArrayList<>();
         for (LevelOneBean lob : levelOneBeans) {
             LevelOne levelOne = new LevelOne();
-            String normalPicPath = "/" + directoryName + "/" + lob.getNormalPic();
-            Material normalPic = transferMaterial(normalPicPath);
+            String normalPicPath = unZipPath + "/" + lob.getNormalPic();
+            Material normalPic = transferMaterial(normalPicPath, achieve);
             levelOne.setNormalPic(normalPic);
-            String selectedPicPath = "/" + directoryName + "/" + lob.getSelectedPic();
-            Material selectedPic = transferMaterial(selectedPicPath);
+            String selectedPicPath = unZipPath + "/" + lob.getSelectedPic();
+            Material selectedPic = transferMaterial(selectedPicPath, achieve);
 
             levelOne.setSelectedPic(selectedPic);
             levelOne.setUrl(lob.getUrl());
@@ -135,8 +152,8 @@ public class TemplateServiceImpl implements TemplateService {
                 levelTwo.setTitle(ltb.getTitle());
                 levelTwo.setMany(ltb.isMany());
                 if (!StringUtils.isEmpty(ltb.getUrl())) {
-                    String urlPath = "/" + directoryName + "/" +ltb.getUrl();
-                    Material urlMaterial = transferMaterial(urlPath);
+                    String urlPath = unZipPath + "/" +ltb.getUrl();
+                    Material urlMaterial = transferMaterial(urlPath, achieve);
                     levelTwo.setUrl(urlMaterial);
                 }
                 levelTwo.setLevelOne(levelOne);
@@ -152,8 +169,8 @@ public class TemplateServiceImpl implements TemplateService {
                         List<String> paths = contentBean.getPaths();
                         List<Material> materials = new ArrayList<>();
                         for (String path : paths) {
-                            String materialPath = "/" + directoryName + "/" + path;
-                            Material material = transferMaterial(materialPath);
+                            String materialPath = unZipPath + "/" + path;
+                            Material material = transferMaterial(materialPath, achieve);
                             materials.add(material);
                         }
                         content.setMaterials(materials);
@@ -171,16 +188,42 @@ public class TemplateServiceImpl implements TemplateService {
         return program;
     }
 
-    private Material transferMaterial(String filePath) throws FileNotFoundException {
+    private Material transferMaterial(String filePath, Achieve achieve) {
         File file = new File(filePath);
         String originName = file.getName();
-        String md5 = MD5Util.getMd5ByFile(file);
-        String suffix = originName.substring(originName.lastIndexOf('.'));
-        String md5Name = md5 + suffix;
-        String path = config.getUploadMaterialPath() + "/" + md5Name;
-        File destFile = new File(path);
-        if (!destFile.exists()) {
-            file.renameTo(new File(path));
+        String md5;
+        try {
+            md5 = MD5Util.getMd5ByFile(file);
+            String suffix = originName.substring(originName.lastIndexOf('.'));
+            String md5Name = md5 + suffix;
+            String path = config.getUploadMaterialPath() + "/" + md5Name;
+            Material material = materialService.findMaterialByMacName(md5Name);
+            if (material == null) {
+                int type = FileUtil.getType(originName);
+                material = new Material();
+                material.setMacName(md5Name);
+                material.setOriginName(originName);
+                material.setPath(path);
+                material.setType(type);
+                List<Achieve> achieves = new ArrayList<>();
+                achieves.add(achieve);
+                File destFile = new File(path);
+                if (!destFile.exists()) {
+                    boolean isSuccess = file.renameTo(new File(path));
+                    if (isSuccess) {
+                        System.out.println("移动文件夹成功");
+                    }
+                }
+            } else {
+                List<Achieve> achieves = material.getAchieves();
+                if (!achieves.contains(achieve)) {
+                    achieves.add(achieve);
+                }
+            }
+            return material;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
+        return null;
     }
 }

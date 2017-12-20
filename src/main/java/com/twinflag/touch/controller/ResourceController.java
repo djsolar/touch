@@ -6,12 +6,17 @@ import com.twinflag.touch.entity.FileMeta;
 import com.twinflag.touch.entity.MaterialLine;
 import com.twinflag.touch.model.Achieve;
 import com.twinflag.touch.model.Material;
+import com.twinflag.touch.model.User;
+import com.twinflag.touch.respository.UserRepository;
 import com.twinflag.touch.service.AchieveService;
 import com.twinflag.touch.service.MaterialService;
+import com.twinflag.touch.service.UserService;
 import com.twinflag.touch.utils.FileUtil;
 import com.twinflag.touch.utils.MD5Util;
 import com.twinflag.touch.utils.SourceType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
@@ -39,6 +44,9 @@ public class ResourceController {
 
     @Autowired
     private MaterialService materialService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private Config config;
@@ -93,9 +101,16 @@ public class ResourceController {
     public boolean addAchieve(HttpServletRequest request) {
         String achieveName = request.getParameter("achieve_name");
         String achieveAuthority = request.getParameter("achieve_authority");
-        Achieve achieve = new Achieve();
+        int authority = Integer.parseInt(achieveAuthority);
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findByUsername(userDetails.getUsername());
+        Achieve achieve = achieveService.findAchieveByNameAndCreateUserAndAuthority(achieveName, user, authority);
+        if (achieve != null)
+            return true;
+        achieve = new Achieve();
         achieve.setName(achieveName);
-        achieve.setAuthority(Integer.parseInt(achieveAuthority));
+        achieve.setAuthority(authority);
+        achieve.setCreateUser(user);
         achieve.setCreateDate(new Date());
         achieveService.saveAchieve(achieve);
         return true;
@@ -128,7 +143,6 @@ public class ResourceController {
     public LinkedList<FileMeta> uploadResource(MultipartHttpServletRequest request, Integer achieveId) {
         System.out.println("achieveId = " + achieveId);
         Achieve achieve = achieveService.findAchieve(achieveId);
-        //1. build an iterator
         Iterator<String> itr = request.getFileNames();
         MultipartFile mpf;
         List<Material> materials = new ArrayList<>();
@@ -148,35 +162,43 @@ public class ResourceController {
             fileMeta = new FileMeta();
             fileMeta.setFileName(fileName);
             fileMeta.setFileSize(mpf.getSize() / 1024 + " Kb");
-            String fileType;
-            int type = FileUtil.getType(fileName);
-            if (type == SourceType.IMAGE.getType()) {
-                fileType = "图片";
-            } else {
-                fileType = "文档";
-            }
-            String filePath = config.getUploadMaterialPath() + mpf.getOriginalFilename();
-            fileMeta.setFileType(fileType);
-            material = new Material();
-            material.setAchieve(achieve);
-            material.setOriginName(fileName);
-            material.setType(type);
             try {
                 fileMeta.setBytes(mpf.getBytes());
                 String md5Name = MD5Util.getMd5ByFile(mpf.getBytes());
-                String md5Path = FileUtil.getMd5Path(filePath, md5Name);
-                FileCopyUtils.copy(mpf.getBytes(), new FileOutputStream(md5Path));
-                File file = new File(md5Path);
-                String macName = file.getName();
-                material.setMacName(macName);
-                material.setPath(md5Path);
-
+                material = materialService.findMaterialByMacName(md5Name);
+                if (material == null) {
+                    String fileType;
+                    int type = FileUtil.getType(fileName);
+                    if (type == SourceType.IMAGE.getType()) {
+                        fileType = "图片";
+                    } else {
+                        fileType = "文档";
+                    }
+                    String filePath = config.getUploadMaterialPath() + mpf.getOriginalFilename();
+                    fileMeta.setFileType(fileType);
+                    material = new Material();
+                    material.setOriginName(fileName);
+                    material.setType(type);
+                    List<Achieve> achieves = new ArrayList<>();
+                    achieves.add(achieve);
+                    String md5Path = FileUtil.getMd5Path(filePath, md5Name);
+                    FileCopyUtils.copy(mpf.getBytes(), new FileOutputStream(md5Path));
+                    File file = new File(md5Path);
+                    String macName = file.getName();
+                    material.setMacName(macName);
+                    material.setPath(md5Path);
+                    materials.add(material);
+                } else {
+                    if (!material.getAchieves().contains(achieve)) {
+                        material.getAchieves().add(achieve);
+                        materials.add(material);
+                    }
+                }
+                files.add(fileMeta);
             } catch (IOException e) {
                 e.printStackTrace();
             }
             //2.4 add to files
-            files.add(fileMeta);
-            materials.add(material);
         }
         materialService.saveMaterials(materials);
         // result will be like this

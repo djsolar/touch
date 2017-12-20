@@ -45,16 +45,9 @@ public class MaterialServiceImpl implements MaterialService{
 
     @Override
     public List<Material> getMaterialByAchieveAndType(Achieve achieve, Integer type) {
-        List list = materialRepository.findFilterMaterials(achieve, type);
-        List<Material> materials = new ArrayList<>();
-        for(Object object : list) {
-            Material material = new Material();
-            Object[] objects = (Object[]) object;
-            material.setId((Integer) objects[0]);
-            material.setMacName((String) objects[1]);
-            material.setOriginName((String) objects[2]);
-            materials.add(material);
-        }
+        List<Achieve> achieves = new ArrayList<>();
+        achieves.add(achieve);
+        List<Material> materials = materialRepository.findMaterialsByAchievesAndType(achieves, type);
         return materials;
     }
 
@@ -77,6 +70,11 @@ public class MaterialServiceImpl implements MaterialService{
         dataTableViewPage.setRecordsTotal(materialPage.getTotalElements());
         dataTableViewPage.setRecordsFiltered(materialPage.getTotalElements());
         return dataTableViewPage;
+    }
+
+    @Override
+    public Material findMaterialByMacName(String md5Name) {
+        return materialRepository.findMaterialByMacName(md5Name);
     }
 
     private PageRequest buildPageRequest(int page, int pageSize) {

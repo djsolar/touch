@@ -47,4 +47,9 @@ public class AchieveServiceImpl implements AchieveService {
     public Achieve findAchieve(Integer id) {
         return achieveRepository.findOne(id);
     }
+
+    @Override
+    public Achieve findAchieveByNameAndCreateUserAndAuthority(String name, User createUser, int authority) {
+        return achieveRepository.findAchieveByNameAndCreateUserAndAuthority(name, createUser, authority);
+    }
 }

@@ -9,4 +9,6 @@ import java.util.List;
 
 public interface AchieveRepository extends PagingAndSortingRepository<Achieve, Integer>, JpaSpecificationExecutor<Achieve> {
     List<Achieve> findAchievesByCreateUser(User user);
+
+    Achieve findAchieveByNameAndCreateUserAndAuthority(String name, User createUser, int authority);
 }

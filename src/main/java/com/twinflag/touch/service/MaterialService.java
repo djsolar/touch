@@ -16,4 +16,6 @@ public interface MaterialService {
 
     DataTableViewPage<Material> findAllMaterial(int page, int pageSize);
 
+    Material findMaterialByMacName(String md5Name);
+
 }

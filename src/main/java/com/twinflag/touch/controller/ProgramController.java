@@ -82,8 +82,8 @@ public class ProgramController {
         List<TreeLevel> treeLevelOnes = new ArrayList<>();
         for(LevelOne levelOne : levelOnes) {
             LevelOneBean levelOneBean = new LevelOneBean();
-            levelOneBean.setNormalPic(levelOne.getNormalPic().getAbsolutePath());
-            levelOneBean.setSelectedPic(levelOne.getSelectedPic().getAbsolutePath());
+            levelOneBean.setNormalPic(levelOne.getNormalPic().getMacName());
+            levelOneBean.setSelectedPic(levelOne.getSelectedPic().getMacName());
             TreeLevel treeLevel = new TreeLevel();
             treeLevel.setText("Level-1");
             treeLevel.setType(0);
@@ -95,7 +95,7 @@ public class ProgramController {
                 levelTwoBean.setLabel(levelTwo.getLabel());
                 levelTwoBean.setTitle(levelTwo.getTitle());
                 levelTwoBean.setMany(levelTwo.isMany());
-                levelTwoBean.setUrl(levelTwo.getUrl());
+                levelTwoBean.setUrl(levelTwo.getUrl().getMacName());
                 TreeLevel treeLevelTwo = new TreeLevel();
                 treeLevelTwo.setText(levelTwo.getLabel());
                 treeLevelTwo.setType(1);
@@ -109,10 +109,10 @@ public class ProgramController {
                         contentBean.setType(content.getType());
                         contentBean.setLabel(content.getLabel());
                         contentBean.setTitle(contentBean.getTitle());
-                        List<Source> sources = content.getSources();
+                        List<Material> materials = content.getMaterials();
                         List<String> paths = new ArrayList<>();
-                        for(Source source : sources) {
-                            paths.add(source.getAbsolutePath());
+                        for(Material material : materials) {
+                            paths.add(material.getMacName());
                         }
                         contentBean.setPaths(paths);
                         String title = content.getTitle() != null ? content.getTitle(): "content";
