@@ -2,10 +2,7 @@ package com.twinflag.touch.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.twinflag.touch.entity.ContentBean;
-import com.twinflag.touch.entity.DataTableViewPage;
-import com.twinflag.touch.entity.LevelOneBean;
-import com.twinflag.touch.entity.LevelTwoBean;
+import com.twinflag.touch.entity.*;
 import com.twinflag.touch.model.*;
 import com.twinflag.touch.service.ProgramService;
 import com.twinflag.touch.service.TemplateService;
@@ -82,8 +79,20 @@ public class ProgramController {
         List<TreeLevel> treeLevelOnes = new ArrayList<>();
         for(LevelOne levelOne : levelOnes) {
             LevelOneBean levelOneBean = new LevelOneBean();
-            levelOneBean.setNormalPic(levelOne.getNormalPic().getMacName());
-            levelOneBean.setSelectedPic(levelOne.getSelectedPic().getMacName());
+
+            Material normalPic = levelOne.getNormalPic();
+            MaterialBean normalMaterial = new MaterialBean();
+            normalMaterial.setOriginName(normalPic.getOriginName());
+            normalMaterial.setMd5Name(normalPic.getMacName());
+            normalMaterial.setId(normalPic.getId());
+            levelOneBean.setNormalMaterial(normalMaterial);
+
+            Material selectedPic = levelOne.getSelectedPic();
+            MaterialBean selectedMaterial = new MaterialBean();
+            selectedMaterial.setOriginName(selectedPic.getOriginName());
+            selectedMaterial.setMd5Name(selectedPic.getMacName());
+            selectedMaterial.setId(selectedPic.getId());
+            levelOneBean.setSelectedMaterial(selectedMaterial);
             TreeLevel treeLevel = new TreeLevel();
             treeLevel.setText("Level-1");
             treeLevel.setType(0);
@@ -96,8 +105,16 @@ public class ProgramController {
                 levelTwoBean.setTitle(levelTwo.getTitle());
                 levelTwoBean.setMany(levelTwo.isMany());
                 if (levelTwo.getUrl() != null) {
-                    levelTwoBean.setUrl(levelTwo.getUrl().getMacName());
+
+                    Material url = levelTwo.getUrl();
+                    levelTwoBean.setMediaType(url.getType());
+                    MaterialBean urlMaterial = new MaterialBean();
+                    urlMaterial.setId(url.getId());
+                    urlMaterial.setMd5Name(url.getMacName());
+                    urlMaterial.setOriginName(url.getOriginName());
+                    levelTwoBean.setUrlMaterial(urlMaterial);
                 }
+
                 TreeLevel treeLevelTwo = new TreeLevel();
                 treeLevelTwo.setText(levelTwo.getLabel());
                 treeLevelTwo.setType(1);
@@ -108,15 +125,19 @@ public class ProgramController {
                     for(Content content : contents) {
                         TreeLevel treeLevelContent = new TreeLevel();
                         ContentBean contentBean = new ContentBean();
-                        contentBean.setType(content.getType());
+                        contentBean.setMediaType(content.getType());
                         contentBean.setLabel(content.getLabel());
                         contentBean.setTitle(contentBean.getTitle());
                         List<Material> materials = content.getMaterials();
-                        List<String> paths = new ArrayList<>();
+                        List<MaterialBean> materialBeans = new ArrayList<>();
                         for(Material material : materials) {
-                            paths.add(material.getMacName());
+                            MaterialBean mb = new MaterialBean();
+                            mb.setId(material.getId());
+                            mb.setMd5Name(material.getMacName());
+                            mb.setOriginName(material.getOriginName());
+                            materialBeans.add(mb);
                         }
-                        contentBean.setPaths(paths);
+                        contentBean.setMaterials(materialBeans);
                         String title = content.getTitle() != null ? content.getTitle(): "content";
                         treeLevelContent.setText(title);
                         treeLevelContent.setType(2);

@@ -1,7 +1,12 @@
 package com.twinflag.touch.entity;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
+@Data
+@NoArgsConstructor
 public class LevelOneBean {
 
     // 未选中图片路径
@@ -10,41 +15,12 @@ public class LevelOneBean {
     // 选中图片路径
     private String selectedPic;
 
+    private MaterialBean normalMaterial;
+
+    private MaterialBean selectedMaterial;
+
     // 资源路径
     private String url;
 
     private List<LevelTwoBean> twoContent;
-
-
-    public String getNormalPic() {
-        return normalPic;
-    }
-
-    public void setNormalPic(String normalPic) {
-        this.normalPic = normalPic;
-    }
-
-    public String getSelectedPic() {
-        return selectedPic;
-    }
-
-    public void setSelectedPic(String selectedPic) {
-        this.selectedPic = selectedPic;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public List<LevelTwoBean> getTwoContent() {
-        return twoContent;
-    }
-
-    public void setTwoContent(List<LevelTwoBean> twoContent) {
-        this.twoContent = twoContent;
-    }
 }

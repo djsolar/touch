@@ -85,7 +85,7 @@ public class ParseUtils {
             contentBean.setTitle(title);
             List<String> paths = new ArrayList<>();
             paths.add(url);
-            contentBean.setType(getType(url));
+            contentBean.setMediaType(getType(url));
             contentBean.setPaths(paths);
             return contentBean;
         }
@@ -97,13 +97,13 @@ public class ParseUtils {
             List<String> paths = getPicPaths(manyPics);
             if (paths != null) {
                 contentBean.setPaths(paths);
-                contentBean.setType(SourceType.IMAGE.getType());
+                contentBean.setMediaType(SourceType.IMAGE.getType());
             }
             List<Element> manyTxts = node.elements("manytxt");
             paths = getPicPaths(manyTxts);
             if (paths != null) {
                 contentBean.setPaths(paths);
-                contentBean.setType(SourceType.TEXT.getType());
+                contentBean.setMediaType(SourceType.TEXT.getType());
             }
             return contentBean;
         }
@@ -113,7 +113,7 @@ public class ParseUtils {
             List<String> paths = new ArrayList<>();
             paths.add(url);
             contentBean.setPaths(paths);
-            contentBean.setType(SourceType.IMAGE.getType());
+            contentBean.setMediaType(SourceType.IMAGE.getType());
             return contentBean;
         }
         return null;

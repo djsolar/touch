@@ -92,6 +92,10 @@ table.materialDataTables {
     border: 2px solid #fff;
 }
 
+#level-two div.content-level-two{
+    border: 2px solid #fff;
+}
+
 #wrapper-content #level-one {
     margin-top: 10%;
 }

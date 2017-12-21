@@ -168,7 +168,7 @@ public class TemplateServiceImpl implements TemplateService {
                 if (contentBeans != null && contentBeans.size() > 0) {
                     for (ContentBean contentBean : contentBeans) {
                         Content content = new Content();
-                        content.setType(contentBean.getType());
+                        content.setType(contentBean.getMediaType());
                         content.setLabel(contentBean.getLabel());
                         content.setTitle(contentBean.getTitle());
                         content.setLevelTwo(levelTwo);

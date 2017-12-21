@@ -60,40 +60,47 @@
                         <li><a href="#" id="add_child_node">子菜单</a></li>
                     </ul>
                 </div>
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">
-                        移&nbsp;动
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">上移</a></li>
-                        <li><a href="#">下移</a></li>
-                        <li><a href="#">头部</a></li>
-                        <li><a href="#">尾部</a></li>
-                    </ul>
-                </div>
-                <button id="delete_select_node" type="button" class="btn btn-danger"><span class="fa fa-trash"></span> 删除</button>
+            <#-- <div class="btn-group" role="group">
+                 <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
+                         aria-haspopup="true" aria-expanded="false">
+                     移&nbsp;动
+                     <span class="caret"></span>
+                 </button>
+                 <ul class="dropdown-menu">
+                     <li><a href="#" id="up_node">上移</a></li>
+                     <li><a href="#" id="down_node">下移</a></li>
+                     <li><a href="#" id="up_header">头部</a></li>
+                     <li><a href="#" id="down_tail">尾部</a></li>
+                 </ul>
+             </div>-->
+                <button id="delete_select_node" type="button" class="btn btn-danger"><span class="fa fa-trash"></span>
+                    删除
+                </button>
             </div>
         </div>
 
         <div class="col-md-7">
             <div class="btn-group" role="group" aria-label="...">
                 <div class="btn-group" role="group" aria-label="..." style="margin-left: 20px; margin-right: 20px;">
-                    <button type="button" class="btn btn-primary"><span class="fa fa-save"></span> 保存</button>
-                    <button type="button" class="btn btn-primary"><span class="fa fa-plus"></span> 添加</button>
-                    <button type="button" class="btn btn-primary"><span class="fa fa-long-arrow-up"></span> 上移</button>
-                    <button type="button" class="btn btn-primary"><span class="fa fa-long-arrow-down"></span> 下移
+                    <button id="operation_save" type="button" class="btn btn-primary"><span class="fa fa-save"></span>
+                        保存
                     </button>
-                    <button type="button" class="btn btn-primary"><span class="fa fa-eye"></span> 查看</button>
-                    <button id="edit_content" type="button" class="btn btn-primary"><span class="fa fa-edit"></span> 编辑
+                    <button id="operation_add" type="button" class="btn btn-primary"><span class="fa fa-plus"></span> 添加
                     </button>
-
-                </div>
-
-                <div class="btn-group" role="group" aria-label="...">
-                    <button type="button" class="btn btn-danger"><span class="fa fa-refresh"></span> 刷新</button>
-                    <button type="button" class="btn btn-danger"><span class="fa fa-trash"></span> 删除</button>
+                    <button id="operation_up" type="button" class="btn btn-primary"><span
+                            class="fa fa-long-arrow-up"></span> 上移
+                    </button>
+                    <button id="operation_down" type="button" class="btn btn-primary"><span
+                            class="fa fa-long-arrow-down"></span> 下移
+                    </button>
+                    <button id="operation_look" type="button" class="btn btn-primary"><span class="fa fa-eye"></span> 查看
+                    </button>
+                    <button id="operation_edit" type="button" class="btn btn-primary"><span class="fa fa-edit"></span>
+                        编辑
+                    </button>
+                    <button id="operation_delete" type="button" class="btn btn-danger"><span class="fa fa-trash"></span>
+                        删除
+                    </button>
                 </div>
             </div>
 
@@ -145,13 +152,13 @@
 
 <script id="level-one-template" type="text/html">
     <div id="level-one" class="row">
-        <div class="display-img col-md-3 col-md-offset-2" mediaType="1">
-            <img src="/{{data.normalPic}}">
+        <div class="display-img col-md-3 col-md-offset-2" mediaType="1" meterialId="{{data.normalMaterial.id}}">
+            <img src="/{{data.normalMaterial.md5Name}}">
             <h3>未选中图片</h3>
         </div>
 
-        <div class="display-img col-md-3 col-md-offset-2" mediaType="1">
-            <img src="/{{data.selectedPic}}">
+        <div class="display-img col-md-3 col-md-offset-2" mediaType="1" meterialId="{{data.selectedMaterial.id}}">
+            <img src="/{{data.selectedMaterial.md5Name}}">
             <h3>选中图片</h3>
         </div>
     </div>
@@ -174,19 +181,21 @@
         {{/if}}
 
         <ul class="list-group" style="list-style: none">
-            {{each data.paths value}}
-            {{if data.type == 1}}
-            <li class="content-img" mediaType="1">
+            {{if data.materials}}
+            {{each data.materials material}}
+            {{if data.mediaType == 1}}
+            <li class="content-img" mediaType="{{data.mediaType}}" materialId="{{material.id}}">
                 <div>
-                    <img src="/{{value}}" alt="{{value}}">
+                    <img src="/{{material.md5Name}}" alt="{{material.originName}}">
                 </div>
             </li>
-            {{else if data.type == 2}}
-            <li class="content-txt" mediaType="2">
-                <label>{{value}}</label>
+            {{else if data.mediaType == 2}}
+            <li class="content-txt" mediaType="{{data.mediaType}}" materialId="{{material.id}}">
+                <label>{{material.originName}}</label>
             </li>
             {{/if}}
             {{/each}}
+            {{/if}}
         </ul>
     </div>
 </script>
@@ -204,9 +213,17 @@
             <input id="level-two-title" class="form-control" type="text" value="{{data.title}}">
         </div>
         {{/if}}
-        {{if data.url }}
+        {{if data.urlMaterial}}
         <label style="margin-top: 20px;">文件路径 </label>
-        <p mediaType="2">{{data.url}}</p>
+        {{if data.mediaType == 1}}
+        <div class="content-level-two content" mediaType="{{data.mediaType}}" materialId="{{data.urlMaterial.id}}">
+            <img src="/{{data.urlMaterial.md5Name}}" alt="{{data.urlMaterial.originName}}">
+        </div>
+        {{else if data.mediaType == 2}}
+        <div class="content" mediaType="{{data.mediaType}}" materialId="{{data.urlMaterial.id}}">
+            <label>{{data.urlMaterial.originName}}</label>
+        </div>
+        {{/if}}
         {{/if}}
     </div>
 </script>

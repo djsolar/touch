@@ -17,6 +17,7 @@ public class ContentBean {
     private List<String> paths;
 
     // 内容类型 1.图片 2.文本
-    private int type;
+    private int mediaType;
 
+    private List<MaterialBean> materials;
 }
