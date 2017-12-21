@@ -1,3 +1,23 @@
+var tree;
+$(function () {
+    tree = $("#wrapper-menu-tree").treeview(
+        {
+            data: data,
+            color: "#4D4D4D",
+            levels: 1,
+            onNodeSelected: function (event, data) {
+                display_selected_node(data);
+            },
+            onNodeUnselected: function (event, data) {
+                clear_content();
+            }
+        });
+    material_select();
+    // 添加删除节点
+    node_delete();
+    node_sibling_add();
+});
+
 function display_selected_node(data) {
     console.log(data);
     var type = data.type;
@@ -26,6 +46,11 @@ function add_level_two_click() {
         $(this).siblings().removeClass("item-active");
         $(this).addClass("item-active");
     });
+}
+
+function clear_content() {
+    var contentNode = $("#wrapper-content");
+    contentNode.empty();
 }
 
 function add_content_click() {
@@ -65,8 +90,11 @@ function display_level_one(data) {
 }
 
 var table;
+
 function material_select() {
     $("#selectMaterial").on("show.bs.modal", function () {
+        var type = $(".item-active").attr("mediaType");
+        console.log("mediaType", type);
 
         if (typeof(table) !== "undefined") {
             console.log("destroy");
@@ -100,8 +128,9 @@ function material_select() {
             "serverSide": true,
             "ajax": {
                 "url": "/resource/getMaterialData",
-                "dataSrc": "aaData"
-            },"dom": 'rt<"#pBottom"p>',
+                "dataSrc": "aaData",
+                "data": {"type": type}
+            }, "dom": 'rt<"#pBottom"p>',
             "columns": [
                 {
                     "data": "first",
@@ -128,5 +157,48 @@ function material_select() {
 
             ]
         });
+        table.on('draw', function () {
+            console.log('Redraw occurred at: ' + new Date().getTime());
+            $("#materialDataTables tbody tr td img.material-select").click(function () {
+                var imgSrc = $(this).attr("src");
+                $(".item-active img").attr("src", imgSrc);
+                $("#selectMaterial").modal("hide");
+            });
+        });
+    });
+}
+
+function node_delete() {
+    $("#delete_select_node").click(function () {
+        var nodes = $('#wrapper-menu-tree').treeview('getSelected');
+        if (nodes.length === 0)
+            return;
+        $('#wrapper-menu-tree').treeview('removeNode', [nodes, {silent: true}]);
+        $('#wrapper-content').empty();
+    });
+}
+
+function node_sibling_add() {
+    $("#add_sibling_node").click(function () {
+        data = {
+            "normalPic":
+                "2ccdf4797de63263d42e115ccd70c9b2.png",
+            "selectedPic":
+                "ac7313f4cebc32d718d2b24fd1162e55.png",
+            "twoContent":
+                null,
+            "url":
+                null
+        };
+
+        var new_node = {"text": "Level-1", "type": 0, "data": data};
+        var nodes = $('#wrapper-menu-tree').treeview('getSelected');
+        var index;
+        var parentNode;
+        if (nodes.length > 0) {
+            index = nodes[0].index + 1;
+            parentNode =$('#wrapper-menu-tree').treeview('getParents', nodes[0]);
+        }
+        $('#wrapper-menu-tree').treeview('addNode', [new_node, parentNode, index, {silent: true}]);
     });
 }

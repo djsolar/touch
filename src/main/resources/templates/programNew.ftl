@@ -48,10 +48,32 @@
                         <li><a href="#">返回</a></li>
                     </ul>
                 </div>
-                <button type="button" class="btn btn-primary"><span class="fa fa-plus"></span> 添加</button>
-                <button type="button" class="btn btn-primary"><span class="fa fa-long-arrow-up"></span> 上移</button>
-                <button type="button" class="btn btn-primary"><span class="fa fa-long-arrow-down"></span> 下移</button>
-                <button type="button" class="btn btn-danger"><span class="fa fa-trash"></span> 删除</button>
+
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                        添&nbsp;加
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="#" id="add_sibling_node">菜单</a></li>
+                        <li><a href="#" id="add_child_node">子菜单</a></li>
+                    </ul>
+                </div>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                        移&nbsp;动
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">上移</a></li>
+                        <li><a href="#">下移</a></li>
+                        <li><a href="#">头部</a></li>
+                        <li><a href="#">尾部</a></li>
+                    </ul>
+                </div>
+                <button id="delete_select_node" type="button" class="btn btn-danger"><span class="fa fa-trash"></span> 删除</button>
             </div>
         </div>
 
@@ -123,13 +145,13 @@
 
 <script id="level-one-template" type="text/html">
     <div id="level-one" class="row">
-        <div class="display-img col-md-3 col-md-offset-2">
-            <img src="/{{data.normalPic}}" mediaType="0">
+        <div class="display-img col-md-3 col-md-offset-2" mediaType="1">
+            <img src="/{{data.normalPic}}">
             <h3>未选中图片</h3>
         </div>
 
-        <div class="display-img col-md-3 col-md-offset-2">
-            <img src="/{{data.selectedPic}}" mediaType="0">
+        <div class="display-img col-md-3 col-md-offset-2" mediaType="1">
+            <img src="/{{data.selectedPic}}">
             <h3>选中图片</h3>
         </div>
     </div>
@@ -154,13 +176,13 @@
         <ul class="list-group" style="list-style: none">
             {{each data.paths value}}
             {{if data.type == 1}}
-            <li class="content-img">
+            <li class="content-img" mediaType="1">
                 <div>
-                    <img src="/{{value}}" alt="{{value}}" mediaType="0">
+                    <img src="/{{value}}" alt="{{value}}">
                 </div>
             </li>
             {{else if data.type == 2}}
-            <li class="content-txt">
+            <li class="content-txt" mediaType="2">
                 <label>{{value}}</label>
             </li>
             {{/if}}
@@ -184,7 +206,7 @@
         {{/if}}
         {{if data.url }}
         <label style="margin-top: 20px;">文件路径 </label>
-        <p mediaType="1">{{data.url}}</p>
+        <p mediaType="2">{{data.url}}</p>
         {{/if}}
     </div>
 </script>
@@ -217,17 +239,6 @@
 <script src="${basePath}/js/program.js"></script>
 <script>
     var data = ${programData};
-    $(function () {
-        var tree = $("#wrapper-menu-tree").treeview({
-            data: data,
-            color: "#4D4D4D",
-            levels: 1,
-            onNodeSelected: function (event, data) {
-                display_selected_node(data);
-            }
-        });
-        material_select();
-    });
 </script>
 </body>
 </html>

@@ -38,7 +38,7 @@ public class Content {
     @CreatedDate
     private Date createTime;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(name = "t_content_material", joinColumns = @JoinColumn(name = "content_id"),
             inverseJoinColumns = @JoinColumn(name = "material_id"))
     private List<Material> materials;

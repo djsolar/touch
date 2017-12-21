@@ -4,6 +4,7 @@ import com.twinflag.touch.entity.DataTableViewPage;
 import com.twinflag.touch.model.Achieve;
 import com.twinflag.touch.model.Material;
 import com.twinflag.touch.model.User;
+import com.twinflag.touch.respository.AchieveRepository;
 import com.twinflag.touch.respository.MaterialRepository;
 import com.twinflag.touch.respository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class MaterialServiceImpl implements MaterialService{
     private MaterialRepository materialRepository;
 
     @Autowired
+    private AchieveRepository achieveRepository;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Override
@@ -35,12 +39,19 @@ public class MaterialServiceImpl implements MaterialService{
     }
 
     @Override
-    public void deleteMaterials(Integer[] ids) {
+    public void deleteMaterials(Integer achieveId, Integer[] ids) {
         if (ids == null || ids.length == 0)
             return;
+        Achieve achieve = achieveRepository.findOne(achieveId);
+        List<Material> materials = new ArrayList<>();
         for(Integer id : ids) {
-            materialRepository.delete(id);
+            Material material = materialRepository.findOne(id);
+            materials.add(material);
+            material.setAchieves(null);
         }
+        achieve.getMaterials().removeAll(materials);
+        achieveRepository.save(achieve);
+        materialRepository.delete(materials);
     }
 
     @Override
@@ -52,14 +63,16 @@ public class MaterialServiceImpl implements MaterialService{
     }
 
     @Override
-    public DataTableViewPage<Material> findAllMaterial(int page, int pageSize) {
+    public DataTableViewPage<Material> findAllMaterial(int page, int pageSize, int type) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userRepository.findByUsername(userDetails.getUsername());
         Specification<Material> materialSpecification = new Specification<Material>() {
             @Override
             public Predicate toPredicate(Root<Material> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                Predicate typePredicate = cb.equal(root.get("type"), type);
                 Join<Material, Achieve> join = root.join("achieves", JoinType.INNER);
-                return cb.equal(join.get("createUser").as(User.class), user);
+                Predicate joinPredicate = cb.equal(join.get("createUser").as(User.class), user);
+                return cb.and(typePredicate, joinPredicate);
             }
         };
 

@@ -66,9 +66,10 @@ public class ResourceController {
 
         int start = Integer.parseInt(request.getParameter("start"));
         int length = Integer.parseInt(request.getParameter("length"));
+        int type = Integer.parseInt(request.getParameter("type"));
         int page = start / length;
         int pageSize = length * 2;
-        DataTableViewPage<Material> dataTableViewPage = materialService.findAllMaterial(page, pageSize);
+        DataTableViewPage<Material> dataTableViewPage = materialService.findAllMaterial(page, pageSize, type);
         return transferMaterial2MaterialLine(dataTableViewPage);
     }
 
@@ -208,8 +209,8 @@ public class ResourceController {
 
     @RequestMapping("/deleteMaterial")
     @ResponseBody
-    public boolean deleteMaterial(@RequestParam(value = "ids[]") Integer[] ids) {
-        materialService.deleteMaterials(ids);
+    public boolean deleteMaterial(@RequestParam(value = "achieveId") Integer achieveId, @RequestParam(value = "ids[]") Integer[] ids) {
+        materialService.deleteMaterials(achieveId, ids);
         return true;
     }
 }

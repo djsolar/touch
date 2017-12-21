@@ -19,11 +19,11 @@ public class LevelOne {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "normal_pic")
     private Material normalPic;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "selected_pic")
     private Material selectedPic;
 
@@ -44,7 +44,7 @@ public class LevelOne {
     @CreatedDate
     private Date createTime;
 
-    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "levelOne")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "levelOne")
     private List<LevelTwo> levelTwos;
 
 }

@@ -10,11 +10,11 @@ public interface MaterialService {
 
     void saveMaterials(List<Material> materials);
 
-    void deleteMaterials(Integer[] ids);
+    void deleteMaterials(Integer achieveId, Integer[] ids);
 
     List<Material> getMaterialByAchieveAndType(Achieve achieve, Integer type);
 
-    DataTableViewPage<Material> findAllMaterial(int page, int pageSize);
+    DataTableViewPage<Material> findAllMaterial(int page, int pageSize, int type);
 
     Material findMaterialByMacName(String md5Name);
 

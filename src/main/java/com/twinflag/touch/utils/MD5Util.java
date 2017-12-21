@@ -19,8 +19,9 @@ public class MD5Util {
     public static String getMd5ByFile(File file) throws FileNotFoundException {
         String value = null;
         FileInputStream in = new FileInputStream(file);
+        MappedByteBuffer byteBuffer = null;
         try {
-            MappedByteBuffer byteBuffer = in.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, file.length());
+            byteBuffer = in.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, file.length());
             MessageDigest md5 = MessageDigest.getInstance("MD5");
             md5.update(byteBuffer);
             BigInteger bi = new BigInteger(1, md5.digest());
@@ -29,6 +30,10 @@ public class MD5Util {
             e.printStackTrace();
         } finally {
             try {
+                if (byteBuffer != null) {
+                    byteBuffer.clear();
+                }
+                in.getChannel().close();
                 in.close();
             } catch (IOException e) {
                 e.printStackTrace();

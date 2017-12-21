@@ -52,7 +52,7 @@ public class Program implements Serializable{
     @CreatedDate
     private Date createTime;
 
-    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "program")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "program")
     @JsonIgnore
     private List<LevelOne> levelOnes;
 }

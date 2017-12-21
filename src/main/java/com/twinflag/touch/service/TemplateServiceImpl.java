@@ -9,6 +9,7 @@ import com.twinflag.touch.model.*;
 import com.twinflag.touch.respository.ProgramRepository;
 import com.twinflag.touch.respository.UserRepository;
 import com.twinflag.touch.utils.*;
+import org.apache.commons.io.FileUtils;
 import org.dom4j.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -196,6 +198,7 @@ public class TemplateServiceImpl implements TemplateService {
 
     private Material transferMaterial(String filePath) {
         File file = new File(filePath);
+        System.out.println("file.exist() = " + file.exists());
         String originName = file.getName();
         String md5;
         try {
@@ -211,18 +214,33 @@ public class TemplateServiceImpl implements TemplateService {
                 material.setOriginName(originName);
                 material.setPath(path);
                 material.setType(type);
-                File destFile = new File(path);
-                if (!destFile.exists()) {
-                    boolean isSuccess = file.renameTo(new File(path));
-                    if (isSuccess) {
-                        System.out.println("移动文件夹成功");
-                    }
+            }
+            File destFile = new File(path);
+            if (!destFile.exists()) {
+                try {
+                    FileUtils.copyFile(file, destFile);
+                    System.out.println("复制文件成功");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.out.printf("复制文件失败");
                 }
             }
+
             return material;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static void main(String[] args) throws IOException {
+        File file = new File("D:\\uploadTemplate\\StreamingAssets\\icons 2\\信访服务选中.png");
+        String originName = file.getName();
+        String suffix = originName.substring(originName.lastIndexOf('.'));
+        String md5 = MD5Util.getMd5ByFile(file);
+        String md5Name = md5 + suffix;
+        String destPath = "D:\\uploadMatrial\\" + md5Name;
+        FileUtils.copyFile(file, new File(destPath));
+
     }
 }

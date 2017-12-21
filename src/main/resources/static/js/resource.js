@@ -178,7 +178,7 @@ function delete_material() {
     $.ajax({
         type: 'post',
         url: '/resource/deleteMaterial',
-        data: {"ids": ids},
+        data: {"achieveId": achieveId, "ids": ids},
         success: function (data) {
             if (data) {
                 $("#deleteMaterial").modal("hide");
