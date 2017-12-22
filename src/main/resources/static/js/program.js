@@ -12,9 +12,9 @@ $(function () {
                 clear_content();
             }
         });
-    String.prototype.endWith=function(endStr){
-        var d=this.length-endStr.length;
-        return (d>=0&&this.lastIndexOf(endStr)==d)
+    String.prototype.endWith = function (endStr) {
+        var d = this.length - endStr.length;
+        return (d >= 0 && this.lastIndexOf(endStr) == d)
     }
     material_select();
     // 添加删除节点
@@ -25,6 +25,8 @@ $(function () {
     down_node();
     up_header();
     down_tail();
+    node_save();
+    material_add();
 });
 
 function display_selected_node(data) {
@@ -42,6 +44,7 @@ function display_selected_node(data) {
         add_content_click();
     }
     content_edit();
+    material_add();
 }
 
 function add_level_one_click() {
@@ -75,14 +78,12 @@ function add_content_click() {
         $("#operation_edit").removeClass("disabled");
         $("#operation_look").removeClass("disabled");
         $("#operation_delete").removeClass("disabled");
+        $("#operation_up").removeClass("disabled");
+        $("#operation_down").removeClass("disabled");
     });
 }
 
-function content_edit() {
-    $("button#operation_edit").click(function () {
-        $("#selectMaterial").modal("show");
-    });
-}
+
 
 
 function display_level_two(data) {
@@ -93,14 +94,14 @@ function display_level_two(data) {
     var tree_node = $("#wrapper-menu-tree");
     var nodes = tree_node.treeview("getSelected");
     var node = nodes[0];
-    if (node.data.url != null) {
+    if (node.data.urlMaterial !== null) {
         $("#operation_add").addClass("disabled");
         $("#operation_up").addClass("disabled");
         $("#operation_down").addClass("disabled");
     } else {
         $("#operation_up").addClass("disabled");
         $("#operation_down").addClass("disabled");
-        if (typeof(node.nodes) !== "undefined" && node.nodes != null && node.nodes.length > 0) {
+        if (typeof(node.nodes) !== "undefined" && node.nodes !== null && node.nodes.length > 0) {
             $("#operation_add").addClass("disabled");
         }
     }
@@ -113,14 +114,17 @@ function display_content(data) {
     contentNode.append(result);
 }
 
+/**
+ * 初始化button的状态
+ */
 function enable_all_button() {
     $("#operation_edit").addClass("disabled");
     $("#operation_look").addClass("disabled");
     $("#operation_delete").addClass("disabled");
+    $("#operation_up").addClass("disabled");
+    $("#operation_down").addClass("disabled");
 
     $("#operation_add").removeClass("disabled");
-    $("#operation_up").removeClass("disabled");
-    $("#operation_down").removeClass("disabled");
     $("#operation_save").removeClass("disabled");
 }
 
@@ -152,7 +156,12 @@ var table;
 
 function material_select() {
     $("#selectMaterial").on("show.bs.modal", function () {
-        var type = $(".item-active").attr("mediaType");
+        var tree_node = $("#wrapper-menu-tree");
+        var nodes = tree_node.treeview('getSelected');
+        if (nodes.length === 0)
+            return;
+        var node = nodes[0];
+        var type = node.data.mediaType;
         console.log("mediaType", type);
 
         if (typeof(table) !== "undefined") {
@@ -219,9 +228,25 @@ function material_select() {
         table.on('draw', function () {
             console.log('Redraw occurred at: ' + new Date().getTime());
             $("#materialDataTables tbody tr td img.material-select").click(function () {
-                var imgSrc = $(this).attr("src");
-                $(".item-active img").attr("src", imgSrc);
-                $("#selectMaterial").modal("hide");
+                var mediaType = $(this).attr("mediaType");
+                var macName = $(this).attr("macName");
+                var originName = $(this).attr("originName");
+                var materialId = $(this).attr("materialId");
+                if (isEdit) {
+                    var activeNode = $(".item-active");
+                    activeNode.attr("mediaType", mediaType);
+                    activeNode.attr("macName", macName);
+                    activeNode.attr("originName", originName);
+                    activeNode.attr("materialId", materialId);
+                    if (mediaType === "1") {
+                        var imgNode = activeNode.find("img");
+                        imgNode.attr("src", "/" + macName);
+                        imgNode.attr("alt", originName);
+                    } else if (mediaType === "2") {
+                        $("#content li.content-txt>label").text(originName);
+                    }
+                    $("#selectMaterial").modal("hide");
+                }
             });
         });
     });
@@ -240,12 +265,39 @@ function node_delete() {
 function node_sibling_add() {
     $("#add_sibling_node").click(function () {
 
-        data = {
-            "normalMaterial": null,
-            "selectedMaterial": null
-        };
-        var new_node = {"text": "Level-1", "type": 0, "data": data};
         var nodes = $('#wrapper-menu-tree').treeview('getSelected');
+        var new_node;
+        if (nodes.length === 0 || nodes[0].type === 0) {
+            var data = {
+                "normalMaterial": null,
+                "selectedMaterial": null
+            };
+            new_node = {"text": "Level-1", "type": 0, "data": data};
+        }
+
+        if (nodes.length > 0 && nodes[0].type === 1) {
+            var data = {
+                "contentBeans": null,
+                "label": "LevelTwoNew",
+                "many": false,
+                "mediaType": 0,
+                "title": "LevelTwoNew",
+                "url": null,
+                "urlMaterial": null
+            };
+            new_node = {"text": "LevelTwoNew", "type": 1, "data": data};
+        }
+
+        if (nodes.length > 0 && nodes[0].type === 2) {
+            var data = {
+                "label": "ContentNew",
+                "materials": [],
+                "mediaType": 0,
+                "title": "ContentNew"
+            }
+            new_node = {"text": "ContentNew", "type": 2, "data": data};
+        }
+
         var index;
         var parentNode;
         if (nodes.length > 0) {
@@ -270,35 +322,37 @@ function node_child_add() {
             var level_two_node = {
                 "text": "levelTwoNew", "type": 1, "data":
                     {
-                        "label": "levelTwoNew", "title": "levelTwoNew",
-                        "url": null, "contentBeans":
-                            null, "many": false
+                        "label": "levelTwoNew",
+                        "title": "levelTwoNew",
+                        "urlMaterial": null,
+                        "many": false,
+                        "mediaType": 0
                     }
             };
             $('#wrapper-menu-tree').treeview('addNode', [level_two_node, nodes[0], undefined, {silent: true}]);
         } else if (node.type === 1) {
             var new_nodes = [];
-            if (node.data.url !== null) {
-                var url = node.data.url;
+            if (node.data.urlMaterial !== null) {
+                var urlMaterial = node.data.urlMaterial;
                 var title = node.data.title;
-                var type = get_file_type(url);
                 var first_node = {
                     "text": title, "type": 2, data:
                         {
-                            "label": title, "title": null,
-                            "paths":[url],
-                            "type": type
+                            "label": title, "title": title,
+                            "materials": [urlMaterial],
+                            "mediaType": node.data.mediaType
                         }
                 };
-                node.data.url = null;
+                node.data.urlMaterial = null;
+                node.data.mediaType = 0;
                 new_nodes.push(first_node);
             }
             var content_node = {
                 "text": "contentNew", "type": 2, data:
                     {
-                        "label": "contentNew", "title": null,
-                        "paths":[],
-                        "type": 0
+                        "label": "contentNew", "title": "contentNew",
+                        "materials": [],
+                        "mediaType": 0
                     }
             };
             new_nodes.push(content_node);
@@ -308,6 +362,7 @@ function node_child_add() {
 
     });
 }
+
 function get_file_type(filename) {
     if (filename.toLowerCase().endWith(".png") || filename.endWith(".jpg") || filename.endWith(".jpeg"))
         return 1;
@@ -329,7 +384,7 @@ function up_node() {
             index = 0;
         }
         $('#wrapper-menu-tree').treeview('addNode', [parentNode, nodes[0], index, {silent: true}]);
-        $('#wrapper-menu-tree').treeview('removeNode', [ node, { silent: true } ]);
+        $('#wrapper-menu-tree').treeview('removeNode', [node, {silent: true}]);
     });
 }
 
@@ -342,7 +397,7 @@ function down_node() {
         var parentNode = $("#wrapper-menu-tree").treeview('getParents', node);
         var index = node.index + 1;
         $('#wrapper-menu-tree').treeview('addNode', [parentNode, node, index, {silent: true}]);
-        $('#wrapper-menu-tree').treeview('removeNode', [ node, { silent: true } ]);
+        $('#wrapper-menu-tree').treeview('removeNode', [node, {silent: true}]);
     });
 }
 
@@ -368,6 +423,156 @@ function up_header() {
 }
 
 function down_tail() {
-    
+
+}
+
+// 保存修改
+function node_save() {
+    $("#operation_save").click(function () {
+        var tree_node = $("#wrapper-menu-tree");
+        var nodes = tree_node.treeview('getSelected');
+        if (nodes.length === 0)
+            return;
+        var node = nodes[0];
+        if (node.type === 0) {
+            var divNodes = $("#level-one div.display-img");
+            var normalDiv = divNodes[0];
+            var selectedDiv = divNodes[1];
+            var normalMaterial = {};
+            var selectedMaterial = {};
+            var id = normalDiv.attributes["materialId"].nodeValue;
+            if (id === "null") {
+                // 添加提示
+                return;
+            }
+            id = selectedDiv.attributes["materialId"].nodeValue;
+            if (id === "null") {
+                // 添加提示
+                return;
+            }
+            normalMaterial["id"] = normalDiv.attributes["materialId"].nodeValue;
+            normalMaterial["md5Name"] = normalDiv.attributes["macName"].nodeValue;
+            normalMaterial["originName"] = normalDiv.attributes["originName"].nodeValue;
+            selectedMaterial["id"] = selectedDiv.attributes["materialId"].nodeValue;
+            selectedMaterial["md5Name"] = selectedDiv.attributes["macName"].nodeValue;
+            selectedMaterial["originName"] = selectedDiv.attributes["originName"].nodeValue;
+            node.data.normalMaterial = normalMaterial;
+            node.data.selectedMaterial = selectedMaterial;
+        } else if (node.type === 1) {
+            var label;
+            var nodeData;
+            if (typeof(node.nodes) !== "undefined" && node.nodes !== null && node.nodes.length > 0) {
+                label = $("#level-two input#level-two-label").val();
+                nodeData = level_two_nodes_copy(node, label);
+            } else {
+                label = $("#level-two input#level-two-label").val();
+                var title = $("#level-two input#level-two-title").val();
+                var urlDivs = $("#level-two div.content");
+                if (typeof(urlDivs) !== "undefined" && urlDivs.length > 0) {
+                    var urlDiv = urlDivs[0];
+                    var id = urlDiv.attributes["materialId"].nodeValue;
+                    var mediaType = urlDiv.attributes["mediaType"].nodeValue;
+                    var macName = urlDiv.attributes["macName"].nodeValue;
+                    var originName = urlDiv.attributes["originName"].nodeValue;
+                    var urlMaterial = {};
+                    urlMaterial["id"] = id;
+                    urlMaterial["macName"] = macName;
+                    urlMaterial["originName"] = originName;
+                    nodeData = {
+                        "text": label, "type": 1, "nodes": node.nodes, data: {
+                            "urlMaterial": urlMaterial, "mediaType": mediaType, "label": label,
+                            "title": title, "many": node.data.many, "mediaType": node.data.mediaType
+                        }
+                    }
+                }
+            }
+            $('#wrapper-menu-tree').treeview('updateNode', [node, nodeData, {silent: true}]);
+        } else if (node.type === 2) {
+            var label = $("#content input#content-label").val();
+            var title = $("#content input#content-title").val();
+            var materials = [];
+            $("#content").find("li").each(function () {
+                var macName = $(this).attr("macName");
+                var originName = $(this).attr("originName");
+                var materialId = $(this).attr("materialId");
+                var material = {"id": materialId, "md5Name": macName, "originName": originName};
+                materials.push(material);
+            })
+            var nodeData = {
+                "text": label,
+                "type": node.type,
+                "data": {
+                    "label": label,
+                    "title": title,
+                    "materials": materials,
+                    "mediaType": node.data.mediaType
+                }
+            };
+            $('#wrapper-menu-tree').treeview('updateNode', [node, nodeData, {silent: true}]);
+        }
+    });
+
+}
+
+function level_two_nodes_copy(selectedNode, label) {
+    var nodes = selectedNode.nodes;
+    var nodeArray = [];
+    for (var i = 0; i < nodes.length; i++) {
+        var node = nodes[i];
+        var materials = node.data.materials;
+        var materialsArray = [];
+        if (typeof (materials) !== "undefined" && materials != null && materials.length > 0) {
+            for (var j = 0; j < materials.length; j++) {
+                var tempMaterial = materials[j];
+                var material = {
+                    "id": tempMaterial.id,
+                    "md5Name": tempMaterial.md5Name,
+                    "originName": tempMaterial.originName
+                };
+                materialsArray.push(material);
+            }
+        }
+        var tempNode = {
+            "type": node.type,
+            "text": node.text,
+            "data": {
+                "label": node.data.label,
+                "mediaType": node.data.mediaType,
+                "title": node.data.title,
+                "materials": materialsArray
+            }
+        };
+        nodeArray.push(tempNode);
+    }
+
+
+    return {
+        "text": label,
+        "type": 1,
+        "nodes": nodeArray,
+        data: {
+            label: label,
+            title: null,
+            urlMaterial: null,
+            "many": node.data.many,
+            "mediaType": node.data.mediaType
+        }
+    };
+}
+
+// 添加元素
+var isEdit;
+function material_add() {
+    $("#operation_add").click(function () {
+        isEdit = false;
+        $("#selectMaterial").modal("show");
+    });
+}
+
+function content_edit() {
+    $("button#operation_edit").click(function () {
+        isEdit = true;
+        $("#selectMaterial").modal("show");
+    });
 }
 

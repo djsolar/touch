@@ -152,15 +152,32 @@
 
 <script id="level-one-template" type="text/html">
     <div id="level-one" class="row">
-        <div class="display-img col-md-3 col-md-offset-2" mediaType="1" meterialId="{{data.normalMaterial.id}}">
-            <img src="/{{data.normalMaterial.md5Name}}">
+        {{if data.normalMaterial}}
+        <div class="display-img col-md-3 col-md-offset-2" mediaType="1" materialId="{{data.normalMaterial.id}}"
+             macName="{{data.normalMaterial.md5Name}}" originName="{{data.normalMaterial.originName}}">
+            <img src="/{{data.normalMaterial.md5Name}}" alt="{{data.normalMaterial.originName}}">
             <h3>未选中图片</h3>
         </div>
-
-        <div class="display-img col-md-3 col-md-offset-2" mediaType="1" meterialId="{{data.selectedMaterial.id}}">
-            <img src="/{{data.selectedMaterial.md5Name}}">
+        {{else}}
+        <div class="display-img col-md-3 col-md-offset-2" mediaType="1" materialId="null" macName="null" originName="null">
+            <img src="/img/1.png" alt="1.png">
+            <h3>未选中图片</h3>
+        </div>
+        {{/if}}
+        {{if data.selectedMaterial}}
+        <div class="display-img col-md-3 col-md-offset-2" mediaType="1" materialId="{{data.selectedMaterial.id}}"
+             macName="{{data.selectedMaterial.md5Name}}" originName="{{data.selectedMaterial.originName}}">
+            <img src="/{{data.selectedMaterial.md5Name}}" alt="{{data.selectedMaterial.originName}}">
             <h3>选中图片</h3>
         </div>
+        {{else}}
+        <div class="display-img col-md-3 col-md-offset-2" mediaType="1" materialId="null"
+             macName="null" originName="null">
+            <img src="/img/1.png" alt="1.png">
+            <h3>选中图片</h3>
+        </div>
+        {{/if}}
+
     </div>
 </script>
 
@@ -184,13 +201,15 @@
             {{if data.materials}}
             {{each data.materials material}}
             {{if data.mediaType == 1}}
-            <li class="content-img" mediaType="{{data.mediaType}}" materialId="{{material.id}}">
+            <li class="content-img" mediaType="{{data.mediaType}}" materialId="{{material.id}}"
+                macName="{{material.md5Name}}" originName="{{material.originName}}">
                 <div>
                     <img src="/{{material.md5Name}}" alt="{{material.originName}}">
                 </div>
             </li>
             {{else if data.mediaType == 2}}
-            <li class="content-txt" mediaType="{{data.mediaType}}" materialId="{{material.id}}">
+            <li class="content-txt" mediaType="{{data.mediaType}}" materialId="{{material.id}}"
+                macName="{{material.md5Name}}" originName="{{material.originName}}">
                 <label>{{material.originName}}</label>
             </li>
             {{/if}}
@@ -198,6 +217,20 @@
             {{/if}}
         </ul>
     </div>
+</script>
+
+<script id="content-item" type="text/html">
+    <li class="content-img" mediaType="{{data.mediaType}}" materialId="{{material.id}}"
+    macName="{{material.md5Name}}" originName="{{material.originName}}">
+            <div>
+            <img src="/{{material.md5Name}}" alt="{{material.originName}}">
+            </div>
+            </li>
+    {{else if data.mediaType == 2}}
+    <li class="content-txt" mediaType="{{data.mediaType}}" materialId="{{material.id}}"
+    macName="{{material.md5Name}}" originName="{{material.originName}}">
+            <label>{{material.originName}}</label>
+    </li>
 </script>
 
 <script id="level-two-template" type="text/html">
@@ -216,11 +249,13 @@
         {{if data.urlMaterial}}
         <label style="margin-top: 20px;">文件路径 </label>
         {{if data.mediaType == 1}}
-        <div class="content-level-two content" mediaType="{{data.mediaType}}" materialId="{{data.urlMaterial.id}}">
+        <div class="content-level-two content" mediaType="{{data.mediaType}}" materialId="{{data.urlMaterial.id}}"
+             macName="{{data.urlMaterial.md5Name}}" originName="{{data.urlMaterial.originName}}">
             <img src="/{{data.urlMaterial.md5Name}}" alt="{{data.urlMaterial.originName}}">
         </div>
         {{else if data.mediaType == 2}}
-        <div class="content" mediaType="{{data.mediaType}}" materialId="{{data.urlMaterial.id}}">
+        <div class="content" mediaType="{{data.mediaType}}" materialId="{{data.urlMaterial.id}}"
+             macName="{{data.urlMaterial.md5Name}}" originName="{{data.urlMaterial.originName}}">
             <label>{{data.urlMaterial.originName}}</label>
         </div>
         {{/if}}
@@ -229,15 +264,17 @@
 </script>
 
 <script id="material-list" type="text/html">
-    <#--<div class="material-item">
-        <img class="material-select" src="/{{material.macName}}">
-        <h4>{{material.originName}}</h4>
-    </div>-->
     {{if material }}
     <div class="row material-item">
         <div class="col-sm-6 col-md-4">
             <div>
-                <img class="material-select" src="/{{material.macName}}">
+                {{if material.type == 1}}
+                <img class="material-select" src="/{{material.macName}}" mediaType="1" materialId="{{material.id}}"
+                     macName="{{material.macName}}" originName="{{material.originName}}">
+                {{else}}
+                <img class="material-select" src="/img/txt.png" mediaType="2" materialId="{{material.id}}"
+                     macName="{{material.macName}}" originName="{{material.originName}}">
+                {{/if}}
                 <div class="caption">
                     <h4>{{material.originName}}</h4>
                 </div>
