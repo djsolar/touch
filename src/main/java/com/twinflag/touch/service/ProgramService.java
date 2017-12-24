@@ -3,13 +3,15 @@ package com.twinflag.touch.service;
 import com.twinflag.touch.entity.DataTableViewPage;
 import com.twinflag.touch.model.Program;
 
+import java.io.IOException;
+
 public interface ProgramService {
 
     /**
      * 保存或者修改节目
      * @param program
      */
-    void saveProgram(Program program);
+    void saveProgram(String programName, String program) throws IOException;
 
     /**
      * 删除节目
@@ -34,6 +36,8 @@ public interface ProgramService {
     void stopProgram(Program program);
 
     void findProgram(Program program);
+
+    boolean isProgramNameExist(String programName);
 
     DataTableViewPage<Program> findAll(int page, int pageSize);
 }

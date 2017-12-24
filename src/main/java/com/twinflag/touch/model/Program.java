@@ -28,10 +28,9 @@ public class Program implements Serializable{
     @Column(name = "zip_path")
     private String zipPath;
 
-    @Column(name = "source_path")
-    private String sourcePath;
-
     private int type;
+
+    private String menuXml;
 
     @ManyToOne
     @JoinColumn(name = "create_user")
@@ -44,9 +43,6 @@ public class Program implements Serializable{
     @Column(name = "updatetime")
     @LastModifiedDate
     private Date updateTime;
-
-    @Column(name = "template_id")
-    private Integer templateId;
 
     @Column(name = "createtime")
     @CreatedDate

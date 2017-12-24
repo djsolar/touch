@@ -33,17 +33,6 @@ public class LevelOne {
     @JoinColumn(name = "program_id")
     private Program program;
 
-    @Column(name = "level_order")
-    private Integer levelOrder;
-
-    @Column(name = "updatetime")
-    @LastModifiedDate
-    private Date updateTime;
-
-    @Column(name = "createtime")
-    @CreatedDate
-    private Date createTime;
-
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "levelOne")
     private List<LevelTwo> levelTwos;
 

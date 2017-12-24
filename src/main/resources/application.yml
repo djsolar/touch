@@ -1,5 +1,5 @@
-upload-template-path: D:/uploadTemplate/
-upload-material-path: D:/uploadMatrial/
+upload-template-path: Users/zhouyiran/Downloads/uploadTemplate/
+upload-material-path: Users/zhouyiran/Downloads/uploadMatrial/
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/court?useUnicode=true&characterEncoding=utf8

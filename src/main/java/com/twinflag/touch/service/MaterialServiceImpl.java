@@ -69,10 +69,17 @@ public class MaterialServiceImpl implements MaterialService{
         Specification<Material> materialSpecification = new Specification<Material>() {
             @Override
             public Predicate toPredicate(Root<Material> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                Predicate typePredicate = cb.equal(root.get("type"), type);
+                Predicate typePredicate = null;
+                if (type != 0) {
+                    typePredicate = cb.equal(root.get("type"), type);
+                }
                 Join<Material, Achieve> join = root.join("achieves", JoinType.INNER);
                 Predicate joinPredicate = cb.equal(join.get("createUser").as(User.class), user);
-                return cb.and(typePredicate, joinPredicate);
+                if (typePredicate != null) {
+                    return cb.and(typePredicate, joinPredicate);
+                } else {
+                    return joinPredicate;
+                }
             }
         };
 

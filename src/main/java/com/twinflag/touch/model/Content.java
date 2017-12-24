@@ -30,14 +30,6 @@ public class Content {
     @JoinColumn(name = "level_two_id")
     private LevelTwo levelTwo;
 
-    @Column(name = "updatetime")
-    @LastModifiedDate
-    private Date updateTime;
-
-    @Column(name = "createtime")
-    @CreatedDate
-    private Date createTime;
-
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(name = "t_content_material", joinColumns = @JoinColumn(name = "content_id"),
             inverseJoinColumns = @JoinColumn(name = "material_id"))

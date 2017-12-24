@@ -131,7 +131,6 @@ public class TemplateServiceImpl implements TemplateService {
         Program program = new Program();
         program.setType(ProgramType.TEMPLATE.getType());
         program.setProgramName(directoryName);
-        program.setSourcePath(unZipPath);
         program.setZipPath(srcPath);
         program.setCreateUser(user);
         program.setUpdateUser(user);

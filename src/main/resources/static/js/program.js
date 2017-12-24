@@ -1,5 +1,17 @@
 var tree;
 $(function () {
+
+    var token = $("meta[name='_csrf']").attr("content");
+    var header = $("meta[name='_csrf_header']").attr("content");
+    $.ajaxSetup({
+            beforeSend: function (xhr) {
+                if (header && token) {
+                    xhr.setRequestHeader(header, token);
+                }
+            }
+        }
+    );
+
     tree = $("#wrapper-menu-tree").treeview(
         {
             data: data,
@@ -27,6 +39,7 @@ $(function () {
     down_tail();
     node_save();
     material_add();
+    save_program();
 });
 
 function display_selected_node(data) {
@@ -45,6 +58,7 @@ function display_selected_node(data) {
     }
     content_edit();
     material_add();
+    material_delete();
 }
 
 function add_level_one_click() {
@@ -59,8 +73,10 @@ function add_level_two_click() {
     $("#level-two div.content").click(function () {
         $(this).siblings().removeClass("item-active");
         $(this).addClass("item-active");
+        if ($(this).attr("mediaType") === "2") {
+            $("#operation_look").removeClass("disabled");
+        }
         $("#operation_edit").removeClass("disabled");
-        $("#operation_look").removeClass("disabled");
         $("#operation_delete").removeClass("disabled");
     });
 }
@@ -75,15 +91,15 @@ function add_content_click() {
     $("#content ul li").click(function () {
         $(this).siblings().removeClass("item-active");
         $(this).addClass("item-active");
+        if ($(this).attr("mediaType") === "2") {
+            $("#operation_look").removeClass("disabled");
+        }
         $("#operation_edit").removeClass("disabled");
-        $("#operation_look").removeClass("disabled");
         $("#operation_delete").removeClass("disabled");
         $("#operation_up").removeClass("disabled");
         $("#operation_down").removeClass("disabled");
     });
 }
-
-
 
 
 function display_level_two(data) {
@@ -162,10 +178,7 @@ function material_select() {
             return;
         var node = nodes[0];
         var type = node.data.mediaType;
-        console.log("mediaType", type);
-
         if (typeof(table) !== "undefined") {
-            console.log("destroy");
             table.destroy();
         }
         table = $('#materialDataTables').DataTable({
@@ -203,22 +216,14 @@ function material_select() {
                 {
                     "data": "first",
                     render: function (data, type, row) {
-                        console.log("data = " + data);
-                        console.log("type = " + type);
-                        console.log(row);
                         var result = template("material-list", {"material": data});
-                        console.log(result);
                         return result;
                     }
                 },
                 {
                     "data": "second",
                     render: function (data, type, row) {
-                        console.log("data = " + data);
-                        console.log("type = " + type);
-                        console.log(row);
                         var result = template("material-list", {"material": data});
-                        console.log(result);
                         return result;
                     }
                 }
@@ -226,12 +231,12 @@ function material_select() {
             ]
         });
         table.on('draw', function () {
-            console.log('Redraw occurred at: ' + new Date().getTime());
             $("#materialDataTables tbody tr td img.material-select").click(function () {
                 var mediaType = $(this).attr("mediaType");
                 var macName = $(this).attr("macName");
                 var originName = $(this).attr("originName");
                 var materialId = $(this).attr("materialId");
+                var node = get_selected_node();
                 if (isEdit) {
                     var activeNode = $(".item-active");
                     activeNode.attr("mediaType", mediaType);
@@ -243,9 +248,41 @@ function material_select() {
                         imgNode.attr("src", "/" + macName);
                         imgNode.attr("alt", originName);
                     } else if (mediaType === "2") {
-                        $("#content li.content-txt>label").text(originName);
+                        $(".item-active>label").text(originName);
                     }
+
                     $("#selectMaterial").modal("hide");
+                } else {
+                    var resultHtml;
+                    if (node.type === 1) {
+                        resultHtml = template("level-two-item", {
+                            "urlMaterial": {
+                                "mediaType": mediaType,
+                                "md5Name": macName,
+                                "originName": originName,
+                                "id": materialId
+                            }
+                        });
+                        $("#level-two").append(resultHtml);
+                        add_level_two_click();
+                        $("#operation_add").addClass("disabled");
+                        node.data.mediaType = mediaType;
+                        $("#selectMaterial").modal("hide");
+                    } else if (node.type === 2) {
+                        resultHtml = template("content-item", {
+                            "material": {
+                                "mediaType": mediaType,
+                                "md5Name": macName,
+                                "originName": originName,
+                                "id": materialId
+                            }
+                        });
+                        $("#content ul").append(resultHtml);
+                        add_content_click();
+                        node.data.mediaType = mediaType;
+                        $("#selectMaterial").modal("hide");
+                    }
+
                 }
             });
         });
@@ -270,7 +307,8 @@ function node_sibling_add() {
         if (nodes.length === 0 || nodes[0].type === 0) {
             var data = {
                 "normalMaterial": null,
-                "selectedMaterial": null
+                "selectedMaterial": null,
+                "mediaType": 1
             };
             new_node = {"text": "Level-1", "type": 0, "data": data};
         }
@@ -417,7 +455,6 @@ function up_header() {
         var new_node = {"text": node.text, "type": node.type, "data": copyData, "state": copyState};
         tree_node.treeview('addNode', [parentNode, new_node, index, {silent: true}]);
         //tree_node.treeview('removeNode', [ node, { silent: true } ]);
-        console.log(index);
         alert(JSON.stringify(new_node));
     });
 }
@@ -479,14 +516,23 @@ function node_save() {
                     urlMaterial["macName"] = macName;
                     urlMaterial["originName"] = originName;
                     nodeData = {
-                        "text": label, "type": 1, "nodes": node.nodes, data: {
+                        "text": label, "type": 1, "nodes": [], data: {
                             "urlMaterial": urlMaterial, "mediaType": mediaType, "label": label,
                             "title": title, "many": node.data.many, "mediaType": node.data.mediaType
                         }
-                    }
+                    };
+                    console.log(nodeData);
+                } else {
+                    nodeData = {
+                        "text": label, "type": 1, "nodes": [], data: {
+                            "urlMaterial": null, "label": label,
+                            "title": title, "many": node.data.many, "mediaType": 0
+                        }
+                    };
                 }
             }
             $('#wrapper-menu-tree').treeview('updateNode', [node, nodeData, {silent: true}]);
+            $("#wrapper-content").empty();
         } else if (node.type === 2) {
             var label = $("#content input#content-label").val();
             var title = $("#content input#content-title").val();
@@ -509,6 +555,7 @@ function node_save() {
                 }
             };
             $('#wrapper-menu-tree').treeview('updateNode', [node, nodeData, {silent: true}]);
+            $("#wrapper-content").empty();
         }
     });
 
@@ -562,6 +609,7 @@ function level_two_nodes_copy(selectedNode, label) {
 
 // 添加元素
 var isEdit;
+
 function material_add() {
     $("#operation_add").click(function () {
         isEdit = false;
@@ -569,10 +617,65 @@ function material_add() {
     });
 }
 
+// 编辑元素
 function content_edit() {
     $("button#operation_edit").click(function () {
         isEdit = true;
         $("#selectMaterial").modal("show");
+    });
+}
+
+// 删除元素
+function material_delete() {
+    $("button#operation_delete").click(function () {
+        $(".item-active").remove();
+        $("#operation_delete").addClass("disabled");
+        var node = get_selected_node();
+        if (node.type === 1) {
+            $("#operation_add").removeClass("disabled");
+            node.data.mediaType = 0;
+        } else if (node.type === 2) {
+            alert($("#content ul").find("li").length === 0)
+        }
+    });
+}
+
+function get_selected_node() {
+    var nodes = $("#wrapper-menu-tree").treeview('getSelected');
+    return nodes[0];
+}
+
+// 保存节目
+function save_program() {
+    $("#save_program").click(function () {
+        var node = $("#wrapper-menu-tree").treeview("findNodes", [0, "type"]);
+        $("#saveProgram").modal("show");
+        $("#save_program_button").click(function () {
+            var programName = $("input#programName").val();
+            var tip = $("#save_program_tip");
+            if (programName.trim() === "") {
+                tip.text("节目名称不能为空");
+                return;
+            }
+            $.ajax({
+                "url": "/program/programExist",
+                "data": {"programName": programName},
+                "success": function (data) {
+                    if (!data) {
+                        $.ajax({
+                            "url": "/program/saveProgram",
+                            "type": "post",
+                            "data": {"programName": programName, "program": JSON.stringify(node)},
+                            "success": function (aaaa) {
+                                console.log(aaaa);
+                            }
+                        })
+                    } else {
+                        tip.text("节目名称不能重复");
+                    }
+                }
+            })
+        });
     });
 }
 

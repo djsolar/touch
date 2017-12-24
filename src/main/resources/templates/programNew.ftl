@@ -8,8 +8,11 @@
     <link rel="stylesheet" type="text/css" href="${basePath}/css/dataTables.bootstrap.css">
     <link rel="stylesheet" type="text/css" href="${basePath}/css/font-awesome.css">
     <link rel="stylesheet" type="text/css" href="${basePath}/css/bootstrap-treeview.css">
-    <link rel="stylesheet" href="${basePath}/css/common.css">
-    <link rel="stylesheet" href="${basePath}/css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="${basePath}/css/common.css">
+    <link rel="stylesheet" type="text/css" href="${basePath}/css/normalize.css">
+    <meta name="_csrf" content="${_csrf.token}"/>
+    <!-- default header name is X-CSRF-TOKEN -->
+    <meta name="_csrf_header" content="${_csrf.headerName}"/>
 </head>
 <body>
 <div id="wrapper-outer">
@@ -43,9 +46,8 @@
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a href="#">保存</a></li>
-                        <li><a href="#">发布</a></li>
-                        <li><a href="#">返回</a></li>
+                        <li><a href="#" id="save_program">保存</a></li>
+                        <li><a href="/program/getProgramData">返回</a></li>
                     </ul>
                 </div>
 
@@ -87,12 +89,12 @@
                     </button>
                     <button id="operation_add" type="button" class="btn btn-primary"><span class="fa fa-plus"></span> 添加
                     </button>
-                    <button id="operation_up" type="button" class="btn btn-primary"><span
+                    <#--<button id="operation_up" type="button" class="btn btn-primary"><span
                             class="fa fa-long-arrow-up"></span> 上移
                     </button>
                     <button id="operation_down" type="button" class="btn btn-primary"><span
                             class="fa fa-long-arrow-down"></span> 下移
-                    </button>
+                    </button>-->
                     <button id="operation_look" type="button" class="btn btn-primary"><span class="fa fa-eye"></span> 查看
                     </button>
                     <button id="operation_edit" type="button" class="btn btn-primary"><span class="fa fa-edit"></span>
@@ -130,9 +132,6 @@
             </div>
             <div class="modal-body">
                 <div class="panel-body">
-                    <div class="material_menu">
-
-                    </div>
                     <div class="material-container">
                         <table class="table" id="materialDataTables">
 
@@ -150,6 +149,38 @@
     <!-- /.modal -->
 </div>
 
+<div class="modal fade" id="saveProgram" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    保存节目
+                </h4>
+            </div>
+            <div class="modal-body">
+                <p id="save_program_tip" style="color: red; padding: 0.35em 0.75em 0.625em"></p>
+                <form>
+                    <fieldset style="font-size: 16px;">
+                        <label>节目名称</label>
+                        <input id="programName" type="text" placeholder="节目名称">
+                    </fieldset>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消
+                </button>
+                <button class="btn btn-primary" id="save_program_button">保存</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal -->
+</div>
+
 <script id="level-one-template" type="text/html">
     <div id="level-one" class="row">
         {{if data.normalMaterial}}
@@ -159,7 +190,8 @@
             <h3>未选中图片</h3>
         </div>
         {{else}}
-        <div class="display-img col-md-3 col-md-offset-2" mediaType="1" materialId="null" macName="null" originName="null">
+        <div class="display-img col-md-3 col-md-offset-2" mediaType="1" materialId="null" macName="null"
+             originName="null">
             <img src="/img/1.png" alt="1.png">
             <h3>未选中图片</h3>
         </div>
@@ -203,9 +235,7 @@
             {{if data.mediaType == 1}}
             <li class="content-img" mediaType="{{data.mediaType}}" materialId="{{material.id}}"
                 macName="{{material.md5Name}}" originName="{{material.originName}}">
-                <div>
-                    <img src="/{{material.md5Name}}" alt="{{material.originName}}">
-                </div>
+                <img src="/{{material.md5Name}}" alt="{{material.originName}}">
             </li>
             {{else if data.mediaType == 2}}
             <li class="content-txt" mediaType="{{data.mediaType}}" materialId="{{material.id}}"
@@ -220,17 +250,17 @@
 </script>
 
 <script id="content-item" type="text/html">
-    <li class="content-img" mediaType="{{data.mediaType}}" materialId="{{material.id}}"
-    macName="{{material.md5Name}}" originName="{{material.originName}}">
-            <div>
-            <img src="/{{material.md5Name}}" alt="{{material.originName}}">
-            </div>
-            </li>
-    {{else if data.mediaType == 2}}
-    <li class="content-txt" mediaType="{{data.mediaType}}" materialId="{{material.id}}"
-    macName="{{material.md5Name}}" originName="{{material.originName}}">
-            <label>{{material.originName}}</label>
+    {{if material.mediaType == 1}}
+    <li class="content-img" mediaType="{{material.mediaType}}" materialId="{{material.id}}"
+        macName="{{material.md5Name}}" originName="{{material.originName}}">
+        <img src="/{{material.md5Name}}" alt="{{material.originName}}">
     </li>
+    {{else if material.mediaType == 2}}
+    <li class="content-txt" mediaType="{{material.mediaType}}" materialId="{{material.id}}"
+        macName="{{material.md5Name}}" originName="{{material.originName}}">
+        <label>{{material.originName}}</label>
+    </li>
+    {{/if}}
 </script>
 
 <script id="level-two-template" type="text/html">
@@ -261,6 +291,20 @@
         {{/if}}
         {{/if}}
     </div>
+</script>
+
+<script id="level-two-item" type="text/html">
+    {{if urlMaterial.mediaType == 1}}
+    <div class="content-level-two content" mediaType="{{urlMaterial.mediaType}}" materialId="{{urlMaterial.id}}"
+         macName="{{urlMaterial.md5Name}}" originName="{{urlMaterial.originName}}">
+        <img src="/{{urlMaterial.md5Name}}" alt="{{urlMaterial.originName}}">
+    </div>
+    {{else if urlMaterial.mediaType == 2}}
+    <div class="content" mediaType="{{urlMaterial.mediaType}}" materialId="{{urlMaterial.id}}"
+         macName="{{urlMaterial.md5Name}}" originName="{{urlMaterial.originName}}">
+        <label>{{urlMaterial.originName}}</label>
+    </div>
+    {{/if}}
 </script>
 
 <script id="material-list" type="text/html">

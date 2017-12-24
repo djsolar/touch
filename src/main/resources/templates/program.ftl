@@ -2,16 +2,17 @@
 <html lang="en">
 
 <head>
+    <#assign basePath=springMacroRequestContext.contextPath>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>节目管理</title>
-    <link rel="stylesheet" type="text/css" href="css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="${basePath}/css/normalize.css">
     <!-- Bootstrap css -->
     <link rel="stylesheet" href="/webjars/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="../css/dataTables.bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="../css/font-awesome.css">
-    <link rel="stylesheet" type="text/css" href="../css/bootstrap-treeview.css">
-    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" type="text/css" href="${basePath}/css/dataTables.bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="${basePath}/css/font-awesome.css">
+    <link rel="stylesheet" type="text/css" href="${basePath}/css/bootstrap-treeview.css">
+    <link rel="stylesheet" href="${basePath}/css/common.css">
 </head>
 
 <body>

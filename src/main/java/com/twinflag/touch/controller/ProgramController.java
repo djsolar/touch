@@ -1,22 +1,29 @@
 package com.twinflag.touch.controller;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationConfig;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.twinflag.touch.entity.*;
 import com.twinflag.touch.model.*;
 import com.twinflag.touch.service.ProgramService;
 import com.twinflag.touch.service.TemplateService;
 import com.twinflag.touch.tree.TreeLevel;
+import com.twinflag.touch.utils.ProgramType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import sun.jvm.hotspot.debugger.cdbg.TemplateType;
 
+import javax.annotation.processing.Processor;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
 
 @Controller
 @RequestMapping("/program")
@@ -38,13 +45,32 @@ public class ProgramController {
     public String getPrograms(Model model) {
         List<Object> templates = templateService.getTemplateInfos();
         Map<String, String> templateMap = new HashMap<>();
-        for(Object p : templates) {
+        for (Object p : templates) {
             System.out.println(p.getClass().getSimpleName());
             Object[] array = (Object[]) p;
             templateMap.put(String.valueOf(array[0]), String.valueOf(array[1]));
         }
         model.addAttribute("templateMap", templateMap);
         return "program";
+    }
+
+    @RequestMapping(value = "/saveProgram", method = {RequestMethod.POST})
+    @ResponseBody
+    public String saveProgram(String programName, String program) {
+        try {
+            programService.saveProgram(programName, program);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "aaa";
+    }
+
+    @RequestMapping("/programExist")
+    @ResponseBody
+    public boolean isProgramExist(String programName) {
+        if (StringUtils.isEmpty(programName))
+            return false;
+        return programService.isProgramNameExist(programName);
     }
 
 
@@ -77,7 +103,7 @@ public class ProgramController {
     public String transferProgramTree(Program program) throws JsonProcessingException {
         List<LevelOne> levelOnes = program.getLevelOnes();
         List<TreeLevel> treeLevelOnes = new ArrayList<>();
-        for(LevelOne levelOne : levelOnes) {
+        for (LevelOne levelOne : levelOnes) {
             LevelOneBean levelOneBean = new LevelOneBean();
 
             Material normalPic = levelOne.getNormalPic();
@@ -93,13 +119,14 @@ public class ProgramController {
             selectedMaterial.setMd5Name(selectedPic.getMacName());
             selectedMaterial.setId(selectedPic.getId());
             levelOneBean.setSelectedMaterial(selectedMaterial);
+            levelOneBean.setMediaType(1);
             TreeLevel treeLevel = new TreeLevel();
             treeLevel.setText("Level-1");
             treeLevel.setType(0);
             treeLevel.setData(levelOneBean);
             List<LevelTwo> levelTwos = levelOne.getLevelTwos();
             List<TreeLevel> treeLevelTwos = new ArrayList<>();
-            for(LevelTwo levelTwo : levelTwos) {
+            for (LevelTwo levelTwo : levelTwos) {
                 LevelTwoBean levelTwoBean = new LevelTwoBean();
                 levelTwoBean.setLabel(levelTwo.getLabel());
                 levelTwoBean.setTitle(levelTwo.getTitle());
@@ -122,7 +149,7 @@ public class ProgramController {
                 List<Content> contents = levelTwo.getContents();
                 List<TreeLevel> treeLevelContents = new ArrayList<>();
                 if (contents.size() > 0) {
-                    for(Content content : contents) {
+                    for (Content content : contents) {
                         TreeLevel treeLevelContent = new TreeLevel();
                         ContentBean contentBean = new ContentBean();
                         contentBean.setMediaType(content.getType());
@@ -130,7 +157,7 @@ public class ProgramController {
                         contentBean.setTitle(contentBean.getTitle());
                         List<Material> materials = content.getMaterials();
                         List<MaterialBean> materialBeans = new ArrayList<>();
-                        for(Material material : materials) {
+                        for (Material material : materials) {
                             MaterialBean mb = new MaterialBean();
                             mb.setId(material.getId());
                             mb.setMd5Name(material.getMacName());
@@ -138,7 +165,7 @@ public class ProgramController {
                             materialBeans.add(mb);
                         }
                         contentBean.setMaterials(materialBeans);
-                        String title = content.getTitle() != null ? content.getTitle(): "content";
+                        String title = content.getTitle() != null ? content.getTitle() : "content";
                         treeLevelContent.setText(title);
                         treeLevelContent.setType(2);
                         treeLevelContent.setData(contentBean);

@@ -19,6 +19,8 @@ public class LevelOneBean {
 
     private MaterialBean selectedMaterial;
 
+    private int mediaType;
+
     // 资源路径
     private String url;
 
