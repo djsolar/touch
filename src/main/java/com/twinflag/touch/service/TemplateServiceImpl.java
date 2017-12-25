@@ -94,8 +94,6 @@ public class TemplateServiceImpl implements TemplateService {
         return false;
     }
 
-
-
     @Override
     public List<Object> getTemplateInfos() {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -205,6 +203,16 @@ public class TemplateServiceImpl implements TemplateService {
             String suffix = originName.substring(originName.lastIndexOf('.'));
             String md5Name = md5 + suffix;
             String path = config.getUploadMaterialPath() + md5Name;
+            File destFile = new File(path);
+            if (!destFile.exists()) {
+                try {
+                    FileUtils.copyFile(file, destFile);
+                    System.out.println("复制文件成功");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.out.println("复制文件失败");
+                }
+            }
             Material material = materialService.findMaterialByMacName(md5Name);
             if (material == null) {
                 int type = FileUtil.getType(originName);
@@ -213,22 +221,11 @@ public class TemplateServiceImpl implements TemplateService {
                 material.setOriginName(originName);
                 material.setPath(path);
                 material.setType(type);
-            }
-            File destFile = new File(path);
-            if (!destFile.exists()) {
-                try {
-                    FileUtils.copyFile(file, destFile);
-                    System.out.println("复制文件成功");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    System.out.printf("复制文件失败");
-                }
-            }
-
-            return material;
+            } return material;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        System.out.println("返回了数据null************************************************");
         return null;
     }
 

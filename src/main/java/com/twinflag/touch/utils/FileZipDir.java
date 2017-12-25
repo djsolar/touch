@@ -1,6 +1,7 @@
 package com.twinflag.touch.utils;
 
 import java.io.File;
+import java.util.Objects;
 
 public class FileZipDir {
 	
@@ -29,6 +30,19 @@ public class FileZipDir {
 	public void setFile(File file) {
 		this.file = file;
 	}
-	
-	
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof FileZipDir)) return false;
+		FileZipDir that = (FileZipDir) o;
+		return Objects.equals(getPrefix(), that.getPrefix()) &&
+				Objects.equals(getFile(), that.getFile());
+	}
+
+	@Override
+	public int hashCode() {
+
+		return Objects.hash(getPrefix(), getFile());
+	}
 }

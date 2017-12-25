@@ -16,6 +16,11 @@ public class Config {
     @Value("${upload-material-path}")
     private String uploadMaterialPath;
 
+    @Value("${program-zip-path}")
+    private String programZipPath;
+
+    @Value("${package-resource-dir}")
+    private String parentAssets;
     @PostConstruct
     public void init() {
         File templateFile = new File(uploadTemplatePath);
@@ -31,6 +36,14 @@ public class Config {
             boolean isSuccess = materialFile.mkdirs();
             if (isSuccess) {
                 System.out.println("Material folder create successfully!");
+            }
+        }
+
+        File programZipFile = new File(programZipPath);
+        if (!programZipFile.exists()) {
+            boolean isSuccess = programZipFile.mkdirs();
+            if (isSuccess) {
+                System.out.println("Program zip file create successfully");
             }
         }
     }

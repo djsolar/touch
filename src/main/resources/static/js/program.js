@@ -1,47 +1,3 @@
-var tree;
-$(function () {
-
-    var token = $("meta[name='_csrf']").attr("content");
-    var header = $("meta[name='_csrf_header']").attr("content");
-    $.ajaxSetup({
-            beforeSend: function (xhr) {
-                if (header && token) {
-                    xhr.setRequestHeader(header, token);
-                }
-            }
-        }
-    );
-
-    tree = $("#wrapper-menu-tree").treeview(
-        {
-            data: data,
-            color: "#4D4D4D",
-            levels: 1,
-            onNodeSelected: function (event, data) {
-                display_selected_node(data);
-            },
-            onNodeUnselected: function (event, data) {
-                clear_content();
-            }
-        });
-    String.prototype.endWith = function (endStr) {
-        var d = this.length - endStr.length;
-        return (d >= 0 && this.lastIndexOf(endStr) == d)
-    }
-    material_select();
-    // 添加删除节点
-    node_delete();
-    node_sibling_add();
-    node_child_add();
-    up_node();
-    down_node();
-    up_header();
-    down_tail();
-    node_save();
-    material_add();
-    save_program();
-});
-
 function display_selected_node(data) {
     console.log(data);
     var type = data.type;
@@ -487,10 +443,10 @@ function node_save() {
                 // 添加提示
                 return;
             }
-            normalMaterial["id"] = normalDiv.attributes["materialId"].nodeValue;
+            normalMaterial["id"] = parseInt(normalDiv.attributes["materialId"].nodeValue);
             normalMaterial["md5Name"] = normalDiv.attributes["macName"].nodeValue;
             normalMaterial["originName"] = normalDiv.attributes["originName"].nodeValue;
-            selectedMaterial["id"] = selectedDiv.attributes["materialId"].nodeValue;
+            selectedMaterial["id"] = parseInt(selectedDiv.attributes["materialId"].nodeValue);
             selectedMaterial["md5Name"] = selectedDiv.attributes["macName"].nodeValue;
             selectedMaterial["originName"] = selectedDiv.attributes["originName"].nodeValue;
             node.data.normalMaterial = normalMaterial;
@@ -512,13 +468,13 @@ function node_save() {
                     var macName = urlDiv.attributes["macName"].nodeValue;
                     var originName = urlDiv.attributes["originName"].nodeValue;
                     var urlMaterial = {};
-                    urlMaterial["id"] = id;
+                    urlMaterial["id"] = parseInt(id);
                     urlMaterial["macName"] = macName;
                     urlMaterial["originName"] = originName;
                     nodeData = {
                         "text": label, "type": 1, "nodes": [], data: {
-                            "urlMaterial": urlMaterial, "mediaType": mediaType, "label": label,
-                            "title": title, "many": node.data.many, "mediaType": node.data.mediaType
+                            "urlMaterial": urlMaterial, "mediaType": parseInt(mediaType), "label": label,
+                            "title": title, "many": node.data.many
                         }
                     };
                     console.log(nodeData);
@@ -541,7 +497,7 @@ function node_save() {
                 var macName = $(this).attr("macName");
                 var originName = $(this).attr("originName");
                 var materialId = $(this).attr("materialId");
-                var material = {"id": materialId, "md5Name": macName, "originName": originName};
+                var material = {"id": parseInt(materialId), "md5Name": macName, "originName": originName};
                 materials.push(material);
             })
             var nodeData = {
@@ -551,7 +507,7 @@ function node_save() {
                     "label": label,
                     "title": title,
                     "materials": materials,
-                    "mediaType": node.data.mediaType
+                    "mediaType": parseInt(node.data.mediaType)
                 }
             };
             $('#wrapper-menu-tree').treeview('updateNode', [node, nodeData, {silent: true}]);
@@ -649,32 +605,54 @@ function get_selected_node() {
 function save_program() {
     $("#save_program").click(function () {
         var node = $("#wrapper-menu-tree").treeview("findNodes", [0, "type"]);
+        console.log(node);
         $("#saveProgram").modal("show");
         $("#save_program_button").click(function () {
-            var programName = $("input#programName").val();
-            var tip = $("#save_program_tip");
-            if (programName.trim() === "") {
-                tip.text("节目名称不能为空");
-                return;
-            }
-            $.ajax({
-                "url": "/program/programExist",
-                "data": {"programName": programName},
-                "success": function (data) {
-                    if (!data) {
-                        $.ajax({
-                            "url": "/program/saveProgram",
-                            "type": "post",
-                            "data": {"programName": programName, "program": JSON.stringify(node)},
-                            "success": function (aaaa) {
-                                console.log(aaaa);
-                            }
-                        })
-                    } else {
-                        tip.text("节目名称不能重复");
+
+            if (isEdit) {
+                alert(JSON.stringify(node));
+                $.ajax({
+                    "url": "/program/updateProgram",
+                    "type": "post",
+                    "data": {"programId": id, "program": JSON.stringify(node)},
+                    "success": function (success) {
+                        if (success) {
+
+                        } else {
+                            tip.text("节目保存失败");
+                        }
                     }
+                });
+            } else{
+                var programName = $("input#programName").val();
+                var tip = $("#save_program_tip");
+                if (programName.trim() === "") {
+                    tip.text("节目名称不能为空");
+                    return;
                 }
-            })
+                $.ajax({
+                    "url": "/program/programExist",
+                    "data": {"programName": programName},
+                    "success": function (data) {
+                        if (!data) {
+                            $.ajax({
+                                "url": "/program/saveProgram",
+                                "type": "post",
+                                "data": {"programName": programName, "program": JSON.stringify(node)},
+                                "success": function (success) {
+                                    if (success) {
+                                        window.location = "/program/getPrograms"
+                                    } else {
+                                        tip.text("节目保存失败");
+                                    }
+                                }
+                            })
+                        } else {
+                            tip.text("节目名称不能重复");
+                        }
+                    }
+                })
+            }
         });
     });
 }

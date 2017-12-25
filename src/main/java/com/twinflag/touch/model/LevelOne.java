@@ -19,11 +19,11 @@ public class LevelOne {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE})
     @JoinColumn(name = "normal_pic")
     private Material normalPic;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE})
     @JoinColumn(name = "selected_pic")
     private Material selectedPic;
 
@@ -33,7 +33,7 @@ public class LevelOne {
     @JoinColumn(name = "program_id")
     private Program program;
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "levelOne")
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "levelOne")
     private List<LevelTwo> levelTwos;
 
 }

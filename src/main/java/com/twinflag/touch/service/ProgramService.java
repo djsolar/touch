@@ -15,9 +15,11 @@ public interface ProgramService {
 
     /**
      * 删除节目
-     * @param program
+     * @param id
      */
-    void deleteProgram(Program program);
+    void deleteProgram(Integer id);
+
+    void updateProgram(Integer id, String programContent) throws IOException;
 
     /**
      * 查找所有的节目
@@ -35,7 +37,7 @@ public interface ProgramService {
      */
     void stopProgram(Program program);
 
-    void findProgram(Program program);
+    Program findProgram(Integer id);
 
     boolean isProgramNameExist(String programName);
 

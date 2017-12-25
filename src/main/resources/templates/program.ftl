@@ -5,6 +5,9 @@
     <#assign basePath=springMacroRequestContext.contextPath>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" content="${_csrf.token}"/>
+    <!-- default header name is X-CSRF-TOKEN -->
+    <meta name="_csrf_header" content="${_csrf.headerName}"/>
     <title>节目管理</title>
     <link rel="stylesheet" type="text/css" href="${basePath}/css/normalize.css">
     <!-- Bootstrap css -->
@@ -143,7 +146,16 @@
 <script src="../js/bootstrap-treeview.js" type="text/javascript"></script>
 <script>
     $(document).ready(function () {
-
+        var token = $("meta[name='_csrf']").attr("content");
+        var header = $("meta[name='_csrf_header']").attr("content");
+        $.ajaxSetup({
+                    beforeSend: function (xhr) {
+                        if (header && token) {
+                            xhr.setRequestHeader(header, token);
+                        }
+                    }
+                }
+        );
         var table;
         Date.prototype.Format = function (fmt) { //author: meizz
             var o = {
@@ -212,7 +224,7 @@
                 }, {
                     "data": "type",
                     render: function (data, type, row) {
-                        return data == 1 ? "已发布" : "未发布";
+                        return data === 1 ? "已发布" : "未发布";
                     }
                 },
                 {
@@ -223,14 +235,18 @@
                 }, {
                     "data": null,
                     render: function (data, type, row) {
-                        return "<div class=\"btn-operation\">\n" +
-                            "                                                <button type=\"button\" class=\"btn btn-primary btn-sm\">发布</button>\n" +
-                            "                                                <button type=\"button\" class=\"btn btn-info btn-sm\">编辑</button>\n" +
-                            "                                                <button type=\"button\" class=\"btn btn-danger btn-sm\">删除</button>\n" +
+                        console.log(row);
+                        return "<div class=\"btn-operation\" programId=\"" + row.id + "\">\n" +
+                            "                                                <button type=\"button\" class=\"btn btn-primary btn-sm publish \">发布</button>\n" +
+                            "                                                <button type=\"button\" class=\"btn btn-info btn-sm edit \">编辑</button>\n" +
+                            "                                                <button type=\"button\" class=\"btn btn-danger btn-sm delete\">删除</button>\n" +
                             "                                            </div>";
                     }
                 }
             ]
+        });
+        table.on('draw', function () {
+            add_operation();
         });
     });
 
@@ -238,6 +254,24 @@
         var templateId = $("#template").val();
         console.log(templateId);
         window.location.href = "/program/createProgram/" + templateId;
+    }
+    
+    function add_operation() {
+        $("button.edit").click(function () {
+            var id = $(this).parent().attr("programId");
+            console.log("id = " + id);
+            window.location.href = "/program/editProgram/" + id;
+        });
+
+        $("button.publish").click(function () {
+            var id = $(this).parent().attr("programId");
+            console.log("id = " + id);
+        });
+
+        $("button.delete").click(function () {
+            var id = $(this).parent().attr("programId");
+            console.log("id = " + id);
+        });
     }
 </script>
 </body>

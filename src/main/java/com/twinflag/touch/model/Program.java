@@ -30,8 +30,6 @@ public class Program implements Serializable{
 
     private int type;
 
-    private String menuXml;
-
     @ManyToOne
     @JoinColumn(name = "create_user")
     private User createUser;
@@ -48,7 +46,7 @@ public class Program implements Serializable{
     @CreatedDate
     private Date createTime;
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "program")
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "program")
     @JsonIgnore
     private List<LevelOne> levelOnes;
 }

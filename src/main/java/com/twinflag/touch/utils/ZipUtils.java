@@ -3,11 +3,9 @@ package com.twinflag.touch.utils;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Expand;
 import org.apache.tools.zip.ZipEntry;
-import org.apache.tools.zip.ZipFile;
 import org.apache.tools.zip.ZipOutputStream;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -266,7 +264,7 @@ public class ZipUtils {
         expand.setProject(project);
         expand.setTaskType("unzip");
         expand.setTaskName("unzip");
-        expand.setEncoding("UTF-8");
+        expand.setEncoding("GBK");
         expand.setSrc(zipFile);
         expand.setDest(new File(destPath));
         expand.execute();

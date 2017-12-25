@@ -1,7 +1,5 @@
 package com.twinflag.touch.utils;
 
-import com.twinflag.touch.model.Material;
-
 import java.io.File;
 import java.io.FileOutputStream;
 
@@ -36,9 +34,5 @@ public class FileUtil {
         String fileName = file.getName();
         String suffix = fileName.substring(fileName.lastIndexOf('.'));
         return dirPath + File.separator + md5 + suffix;
-    }
-
-    public static void main(String[] args) {
-        System.out.println(getMd5Path("/Users/zhouyiran/Desktop/aa.txt", "defghijklmn"));
     }
 }

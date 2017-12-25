@@ -1,19 +1,18 @@
 package com.twinflag.touch.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator;
+import com.twinflag.touch.config.Config;
 import com.twinflag.touch.entity.DataTableViewPage;
 import com.twinflag.touch.model.*;
+import com.twinflag.touch.respository.LevelOneRepository;
 import com.twinflag.touch.respository.MaterialRepository;
 import com.twinflag.touch.respository.ProgramRepository;
 import com.twinflag.touch.respository.UserRepository;
 import com.twinflag.touch.tree.TreeLevel;
 import com.twinflag.touch.utils.PageRequestBuilder;
 import com.twinflag.touch.utils.ProgramType;
+import com.twinflag.touch.utils.ProgramZipUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
@@ -37,7 +36,13 @@ import java.util.List;
 public class ProgramServiceImpl implements ProgramService {
 
     @Autowired
+    private Config config;
+
+    @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private LevelOneRepository levelOneRepository;
 
     @Autowired
     private ProgramRepository programRepository;
@@ -61,7 +66,7 @@ public class ProgramServiceImpl implements ProgramService {
         return mapper.getTypeFactory().constructParametricType(collectionClass, elementClasses);
     }
 
-    private Program transferTreeLevel2Program(User user, String programName, List<TreeLevel> treeLevels) {
+    private Program transferTreeLevel2Program(User user, String programName, List<TreeLevel> treeLevels) throws IOException {
         if (treeLevels == null || treeLevels.size() == 0)
             return null;
         Program program = new Program();
@@ -91,6 +96,7 @@ public class ProgramServiceImpl implements ProgramService {
                 levelTwo.setMany((Boolean) levelTwoData.get("many"));
                 if (levelTwoData.get("urlMaterial") != null) {
                     LinkedHashMap<String, Object> url = (LinkedHashMap<String, Object>) levelTwoData.get("urlMaterial");
+                    System.out.println(url.get("id"));
                     Material urlMaterial = materialRepository.findOne((Integer) url.get("id"));
                     levelTwo.setUrl(urlMaterial);
                     levelTwo.setLevelOne(levelOne);
@@ -129,14 +135,38 @@ public class ProgramServiceImpl implements ProgramService {
             levelOne.setProgram(program);
             levelOnes.add(levelOne);
         }
+        ProgramZipUtils programZipUtils = new ProgramZipUtils(levelOnes, programName, config);
+        String zipFilePath = programZipUtils.zipProgram();
         program.setLevelOnes(levelOnes);
+        program.setZipPath(zipFilePath);
         return program;
     }
 
     @Override
-    public void deleteProgram(Program program) {
-
+    public void deleteProgram(Integer id) {
+        Program program = programRepository.findOne(id);
+        for(LevelOne levelOne : program.getLevelOnes()) {
+            levelOne.setProgram(null);
+            levelOneRepository.delete(levelOne);
+        }
+        programRepository.delete(program);
     }
+
+    @Override
+    public void updateProgram(Integer id, String programContent) throws IOException {
+        Program program = programRepository.findOne(id);
+        ObjectMapper om = new ObjectMapper();
+        JavaType javaType = getCollectionType(om, ArrayList.class, TreeLevel.class);
+        List<TreeLevel> treeLevels = om.readValue(programContent, javaType);
+        Program tempProgram = transferTreeLevel2Program(program.getCreateUser(), program.getProgramName(), treeLevels);
+        for(LevelOne levelOne : tempProgram.getLevelOnes()) {
+            levelOne.setProgram(program);
+        }
+        program.setUpdateTime(new Date());
+        program.setLevelOnes(tempProgram.getLevelOnes());
+        programRepository.save(program);
+    }
+
 
     @Override
     public void findAllProgram() {
@@ -154,8 +184,8 @@ public class ProgramServiceImpl implements ProgramService {
     }
 
     @Override
-    public void findProgram(Program program) {
-
+    public Program findProgram(Integer id) {
+        return programRepository.findOne(id);
     }
 
     @Override
@@ -193,14 +223,5 @@ public class ProgramServiceImpl implements ProgramService {
         programDataTableViewPage.setRecordsTotal(programPage.getTotalElements());
         programDataTableViewPage.setRecordsFiltered((int) programPage.getTotalElements());
         return programDataTableViewPage;
-    }
-
-    public static void main(String[] args) throws JsonProcessingException {
-        XmlMapper xmlMapper = new XmlMapper();
-        xmlMapper.configure(ToXmlGenerator.Feature.WRITE_XML_DECLARATION, true);
-        ObjectNode objectNode = xmlMapper.createObjectNode();
-        objectNode.put("name", "level");
-        String xml = xmlMapper.writeValueAsString(objectNode);
-        System.out.println(xml);
     }
 }

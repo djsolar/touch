@@ -30,7 +30,7 @@ public class Content {
     @JoinColumn(name = "level_two_id")
     private LevelTwo levelTwo;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE})
     @JoinTable(name = "t_content_material", joinColumns = @JoinColumn(name = "content_id"),
             inverseJoinColumns = @JoinColumn(name = "material_id"))
     private List<Material> materials;

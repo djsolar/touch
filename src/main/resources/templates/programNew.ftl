@@ -3,6 +3,9 @@
 <head>
 <#assign basePath=springMacroRequestContext.contextPath>
     <meta charset="UTF-8">
+    <meta name="_csrf" content="${_csrf.token}"/>
+    <!-- default header name is X-CSRF-TOKEN -->
+    <meta name="_csrf_header" content="${_csrf.headerName}"/>
     <title>Title</title>
     <link rel="stylesheet" href="/webjars/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="${basePath}/css/dataTables.bootstrap.css">
@@ -10,9 +13,6 @@
     <link rel="stylesheet" type="text/css" href="${basePath}/css/bootstrap-treeview.css">
     <link rel="stylesheet" type="text/css" href="${basePath}/css/common.css">
     <link rel="stylesheet" type="text/css" href="${basePath}/css/normalize.css">
-    <meta name="_csrf" content="${_csrf.token}"/>
-    <!-- default header name is X-CSRF-TOKEN -->
-    <meta name="_csrf_header" content="${_csrf.headerName}"/>
 </head>
 <body>
 <div id="wrapper-outer">
@@ -47,7 +47,7 @@
                     </button>
                     <ul class="dropdown-menu">
                         <li><a href="#" id="save_program">保存</a></li>
-                        <li><a href="/program/getProgramData">返回</a></li>
+                        <li><a href="/program/getPrograms">返回</a></li>
                     </ul>
                 </div>
 
@@ -89,12 +89,12 @@
                     </button>
                     <button id="operation_add" type="button" class="btn btn-primary"><span class="fa fa-plus"></span> 添加
                     </button>
-                    <#--<button id="operation_up" type="button" class="btn btn-primary"><span
-                            class="fa fa-long-arrow-up"></span> 上移
-                    </button>
-                    <button id="operation_down" type="button" class="btn btn-primary"><span
-                            class="fa fa-long-arrow-down"></span> 下移
-                    </button>-->
+                <#--<button id="operation_up" type="button" class="btn btn-primary"><span
+                        class="fa fa-long-arrow-up"></span> 上移
+                </button>
+                <button id="operation_down" type="button" class="btn btn-primary"><span
+                        class="fa fa-long-arrow-down"></span> 下移
+                </button>-->
                     <button id="operation_look" type="button" class="btn btn-primary"><span class="fa fa-eye"></span> 查看
                     </button>
                     <button id="operation_edit" type="button" class="btn btn-primary"><span class="fa fa-edit"></span>
@@ -162,13 +162,16 @@
                 </h4>
             </div>
             <div class="modal-body">
-                <p id="save_program_tip" style="color: red; padding: 0.35em 0.75em 0.625em"></p>
-                <form>
-                    <fieldset style="font-size: 16px;">
-                        <label>节目名称</label>
-                        <input id="programName" type="text" placeholder="节目名称">
-                    </fieldset>
-                </form>
+                <#if isEdit = "false">
+                    <p id="save_program_tip" style="color: red; padding: 0.35em 0.75em 0.625em"></p>
+                    <form>
+                        <fieldset style="font-size: 16px;">
+                            <label>节目名称</label>
+                            <input id="programName" type="text" placeholder="节目名称">
+                        </fieldset>
+                    </form>
+                </#if>
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">取消
@@ -336,7 +339,54 @@
 <script src="${basePath}/js/template-web.js"></script>
 <script src="${basePath}/js/program.js"></script>
 <script>
-    var data = ${programData};
+    var data;
+    var isEdit;
+    var id;
+    var tree;
+    $(function () {
+        data = ${programData};
+        isEdit = ${isEdit};
+        id = ${id};
+        var token = $("meta[name='_csrf']").attr("content");
+        var header = $("meta[name='_csrf_header']").attr("content");
+        $.ajaxSetup({
+                    beforeSend: function (xhr) {
+                        if (header && token) {
+                            xhr.setRequestHeader(header, token);
+                        }
+                    }
+                }
+        );
+
+        tree = $("#wrapper-menu-tree").treeview(
+                {
+                    data: data,
+                    color: "#4D4D4D",
+                    levels: 1,
+                    onNodeSelected: function (event, data) {
+                        display_selected_node(data);
+                    },
+                    onNodeUnselected: function (event, data) {
+                        clear_content();
+                    }
+                });
+        String.prototype.endWith = function (endStr) {
+            var d = this.length - endStr.length;
+            return (d >= 0 && this.lastIndexOf(endStr) == d)
+        }
+        material_select();
+        // 添加删除节点
+        node_delete();
+        node_sibling_add();
+        node_child_add();
+        up_node();
+        down_node();
+        up_header();
+        down_tail();
+        node_save();
+        material_add();
+        save_program();
+    });
 </script>
 </body>
 </html>

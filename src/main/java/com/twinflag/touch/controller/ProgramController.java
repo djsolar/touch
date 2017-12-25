@@ -1,26 +1,18 @@
 package com.twinflag.touch.controller;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationConfig;
-import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.twinflag.touch.entity.*;
 import com.twinflag.touch.model.*;
 import com.twinflag.touch.service.ProgramService;
 import com.twinflag.touch.service.TemplateService;
 import com.twinflag.touch.tree.TreeLevel;
-import com.twinflag.touch.utils.ProgramType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import sun.jvm.hotspot.debugger.cdbg.TemplateType;
 
-import javax.annotation.processing.Processor;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.*;
@@ -56,13 +48,26 @@ public class ProgramController {
 
     @RequestMapping(value = "/saveProgram", method = {RequestMethod.POST})
     @ResponseBody
-    public String saveProgram(String programName, String program) {
+    public boolean saveProgram(String programName, String program) {
         try {
             programService.saveProgram(programName, program);
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
-        return "aaa";
+        return true;
+    }
+
+    @RequestMapping(value = "/updateProgram", method = {RequestMethod.POST})
+    @ResponseBody
+    public boolean changeProgram(Integer programId, String program) {
+        try {
+            programService.updateProgram(programId, program);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     @RequestMapping("/programExist")
@@ -91,14 +96,30 @@ public class ProgramController {
     public String createProgram(@PathVariable Integer id, Model model) {
         Program program = templateService.findTemplate(id);
         try {
-            String programData2 = transferProgramTree(program);
-            System.out.println(programData2);
-            model.addAttribute("programData", programData2);
+            String programData = transferProgramTree(program);
+            model.addAttribute("programData", programData);
+            model.addAttribute("isEdit", "false");
+            model.addAttribute("id", id);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
         return "programNew";
     }
+
+    @RequestMapping(value = "/editProgram/{id}", method = {RequestMethod.GET})
+    public String editProgram(@PathVariable Integer id, Model model) {
+        Program program = programService.findProgram(id);
+        try {
+            String programData = transferProgramTree(program);
+            model.addAttribute("programData", programData);
+            model.addAttribute("isEdit", "true");
+            model.addAttribute("id", id);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return "programNew";
+    }
+
 
     public String transferProgramTree(Program program) throws JsonProcessingException {
         List<LevelOne> levelOnes = program.getLevelOnes();
