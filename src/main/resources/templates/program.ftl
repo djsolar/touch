@@ -216,15 +216,16 @@
             "columns": [
                 {"data": "id"},
                 {"data": "programName"},
+                 {
+                    "data": "type",
+                    render: function (data, type, row) {
+                        return data === 1 ? "已发布" : "未发布";
+                    }
+                },
                 {
                     "data": "updateTime",
                     render: function (data, type, row) {
                         return (new Date(data)).Format("yyyy-MM-dd hh:mm:ss");
-                    }
-                }, {
-                    "data": "type",
-                    render: function (data, type, row) {
-                        return data === 1 ? "已发布" : "未发布";
                     }
                 },
                 {
@@ -236,11 +237,12 @@
                     "data": null,
                     render: function (data, type, row) {
                         console.log(row);
-                        return "<div class=\"btn-operation\" programId=\"" + row.id + "\">\n" +
-                            "                                                <button type=\"button\" class=\"btn btn-primary btn-sm publish \">发布</button>\n" +
-                            "                                                <button type=\"button\" class=\"btn btn-info btn-sm edit \">编辑</button>\n" +
-                            "                                                <button type=\"button\" class=\"btn btn-danger btn-sm delete\">删除</button>\n" +
-                            "                                            </div>";
+                        return "<div class=\"btn-operation\" programId=\"" + row.id + "\" programZip=\"" + row.zipPath + "\">\n" +
+                                "<button type=\"button\" class=\"btn btn-primary btn-sm publish \">发布</button>\n" +
+                                "<button type=\"button\" class=\"btn btn-info btn-sm edit \">编辑</button>\n" +
+                                "<button type=\"button\" class=\"btn btn-info btn-sm export \">导出</button>\n" +
+                                "<button type=\"button\" class=\"btn btn-danger btn-sm delete\">删除</button>\n" +
+                                "</div>";
                     }
                 }
             ]
@@ -255,7 +257,7 @@
         console.log(templateId);
         window.location.href = "/program/createProgram/" + templateId;
     }
-    
+
     function add_operation() {
         $("button.edit").click(function () {
             var id = $(this).parent().attr("programId");
@@ -266,11 +268,25 @@
         $("button.publish").click(function () {
             var id = $(this).parent().attr("programId");
             console.log("id = " + id);
+
         });
 
         $("button.delete").click(function () {
             var id = $(this).parent().attr("programId");
             console.log("id = " + id);
+            $.ajax({
+                "url": "/program/deleteProgram/" + id,
+                "type": "get",
+                "success": function (data) {
+                    if (data) {
+                        window.location.reload();
+                    }
+                }
+            });
+        });
+
+        $("button.export").click(function () {
+            window.location.href = $(this).parent().attr("programZip");
         });
     }
 </script>

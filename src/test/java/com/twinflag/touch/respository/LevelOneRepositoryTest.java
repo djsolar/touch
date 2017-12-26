@@ -17,7 +17,7 @@ public class LevelOneRepositoryTest {
     @Test
     public void deleteLevelTwo() {
         LevelTwo levelTwo = levelTwoRepository.findOne(507);
-        levelTwo.setContents(null);
+        levelTwo.getContents();
         levelTwoRepository.save(levelTwo);
         levelTwoRepository.delete(levelTwo);
     }

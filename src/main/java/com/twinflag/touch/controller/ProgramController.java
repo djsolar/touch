@@ -70,6 +70,21 @@ public class ProgramController {
         return true;
     }
 
+    @RequestMapping(value = "/deleteProgram/{id}", method = {RequestMethod.GET})
+    @ResponseBody
+    public boolean deleteProgram(@PathVariable Integer id) {
+        programService.deleteProgram(id);
+        return true;
+    }
+
+    @RequestMapping(value = "/publishProgram/{id}")
+    public boolean publishProgram(@PathVariable Integer id) {
+        Program program = programService.findProgram(id);
+        String zipPath = program.getZipPath();
+        return true;
+    }
+
+
     @RequestMapping("/programExist")
     @ResponseBody
     public boolean isProgramExist(String programName) {
@@ -126,7 +141,7 @@ public class ProgramController {
         List<TreeLevel> treeLevelOnes = new ArrayList<>();
         for (LevelOne levelOne : levelOnes) {
             LevelOneBean levelOneBean = new LevelOneBean();
-
+            levelOneBean.setId(levelOne.getId());
             Material normalPic = levelOne.getNormalPic();
             MaterialBean normalMaterial = new MaterialBean();
             normalMaterial.setOriginName(normalPic.getOriginName());
@@ -149,6 +164,7 @@ public class ProgramController {
             List<TreeLevel> treeLevelTwos = new ArrayList<>();
             for (LevelTwo levelTwo : levelTwos) {
                 LevelTwoBean levelTwoBean = new LevelTwoBean();
+                levelTwoBean.setId(levelTwo.getId());
                 levelTwoBean.setLabel(levelTwo.getLabel());
                 levelTwoBean.setTitle(levelTwo.getTitle());
                 levelTwoBean.setMany(levelTwo.isMany());
@@ -173,6 +189,7 @@ public class ProgramController {
                     for (Content content : contents) {
                         TreeLevel treeLevelContent = new TreeLevel();
                         ContentBean contentBean = new ContentBean();
+                        contentBean.setId(content.getId());
                         contentBean.setMediaType(content.getType());
                         contentBean.setLabel(content.getLabel());
                         contentBean.setTitle(contentBean.getTitle());

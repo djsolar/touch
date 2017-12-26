@@ -617,7 +617,7 @@ function save_program() {
                     "data": {"programId": id, "program": JSON.stringify(node)},
                     "success": function (success) {
                         if (success) {
-
+                            window.location.href = "/program/getPrograms";
                         } else {
                             tip.text("节目保存失败");
                         }

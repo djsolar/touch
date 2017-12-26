@@ -7,6 +7,8 @@ import java.util.List;
 @Data
 public class ContentBean {
 
+    private Integer id;
+
     // 内容标签
     private String label;
 

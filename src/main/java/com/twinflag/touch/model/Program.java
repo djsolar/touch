@@ -46,7 +46,7 @@ public class Program implements Serializable{
     @CreatedDate
     private Date createTime;
 
-    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "program")
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "program")
     @JsonIgnore
     private List<LevelOne> levelOnes;
 }

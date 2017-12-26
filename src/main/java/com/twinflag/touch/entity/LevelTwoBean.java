@@ -9,6 +9,8 @@ import java.util.List;
 @NoArgsConstructor
 public class LevelTwoBean {
 
+    private Integer id;
+
     private String label;
 
     private boolean isMany;

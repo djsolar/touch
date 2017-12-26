@@ -2,11 +2,8 @@ package com.twinflag.touch.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -33,7 +30,7 @@ public class LevelOne {
     @JoinColumn(name = "program_id")
     private Program program;
 
-    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "levelOne")
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy = "levelOne")
     private List<LevelTwo> levelTwos;
 
 }

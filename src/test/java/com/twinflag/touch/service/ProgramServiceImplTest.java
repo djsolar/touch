@@ -16,6 +16,6 @@ public class ProgramServiceImplTest {
 
     @Test
     public void testDeleteProgram() {
-        programService.deleteProgram(12);
+        programService.deleteProgram(7);
     }
 }

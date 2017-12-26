@@ -9,6 +9,8 @@ import java.util.List;
 @NoArgsConstructor
 public class LevelOneBean {
 
+    private Integer id;
+
     // 未选中图片路径
     private String normalPic;
 

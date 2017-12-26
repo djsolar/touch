@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.twinflag.touch.config.Config;
 import com.twinflag.touch.entity.DataTableViewPage;
 import com.twinflag.touch.model.*;
-import com.twinflag.touch.respository.LevelOneRepository;
 import com.twinflag.touch.respository.MaterialRepository;
 import com.twinflag.touch.respository.ProgramRepository;
 import com.twinflag.touch.respository.UserRepository;
@@ -42,13 +41,13 @@ public class ProgramServiceImpl implements ProgramService {
     private UserRepository userRepository;
 
     @Autowired
-    private LevelOneRepository levelOneRepository;
-
-    @Autowired
     private ProgramRepository programRepository;
 
     @Autowired
     private MaterialRepository materialRepository;
+
+    @Autowired
+    private LevelOneService levelOneService;
 
     @Override
     public void saveProgram(String programName, String programContent) throws IOException {
@@ -136,28 +135,26 @@ public class ProgramServiceImpl implements ProgramService {
             levelOnes.add(levelOne);
         }
         ProgramZipUtils programZipUtils = new ProgramZipUtils(levelOnes, programName, config);
-        String zipFilePath = programZipUtils.zipProgram();
+        programZipUtils.zipProgram();
         program.setLevelOnes(levelOnes);
-        program.setZipPath(zipFilePath);
+        program.setZipPath("/programZip/" + programName + ".zip");
         return program;
     }
 
     @Override
     public void deleteProgram(Integer id) {
-        Program program = programRepository.findOne(id);
-        for(LevelOne levelOne : program.getLevelOnes()) {
-            levelOne.setProgram(null);
-            levelOneRepository.delete(levelOne);
-        }
-        programRepository.delete(program);
+        programRepository.delete(id);
     }
 
     @Override
     public void updateProgram(Integer id, String programContent) throws IOException {
-        Program program = programRepository.findOne(id);
         ObjectMapper om = new ObjectMapper();
         JavaType javaType = getCollectionType(om, ArrayList.class, TreeLevel.class);
         List<TreeLevel> treeLevels = om.readValue(programContent, javaType);
+        Program program = programRepository.findOne(id);
+        for(LevelOne levelOne : program.getLevelOnes()) {
+            levelOneService.deleteLevelOne(levelOne);
+        }
         Program tempProgram = transferTreeLevel2Program(program.getCreateUser(), program.getProgramName(), treeLevels);
         for(LevelOne levelOne : tempProgram.getLevelOnes()) {
             levelOne.setProgram(program);
