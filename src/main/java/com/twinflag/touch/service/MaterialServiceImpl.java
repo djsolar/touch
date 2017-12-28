@@ -63,9 +63,9 @@ public class MaterialServiceImpl implements MaterialService{
     }
 
     @Override
-    public DataTableViewPage<Material> findAllMaterial(int page, int pageSize, int type) {
+    public DataTableViewPage<Material> findAllMaterial(int page, int pageSize,final int type) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findByUsername(userDetails.getUsername());
+        final User  user = userRepository.findByUsername(userDetails.getUsername());
         Specification<Material> materialSpecification = new Specification<Material>() {
             @Override
             public Predicate toPredicate(Root<Material> root, CriteriaQuery<?> query, CriteriaBuilder cb) {

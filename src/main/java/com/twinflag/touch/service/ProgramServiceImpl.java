@@ -186,9 +186,9 @@ public class ProgramServiceImpl implements ProgramService {
     }
 
     @Override
-    public boolean isProgramNameExist(String programName) {
+    public boolean isProgramNameExist(final String programName) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findByUsername(userDetails.getUsername());
+        final User user = userRepository.findByUsername(userDetails.getUsername());
         Specification<Program> programSpecification = new Specification<Program>() {
             @Override
             public Predicate toPredicate(Root<Program> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -204,7 +204,7 @@ public class ProgramServiceImpl implements ProgramService {
     @Override
     public DataTableViewPage<Program> findAll(int page, int pageSize) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findByUsername(userDetails.getUsername());
+        final User user = userRepository.findByUsername(userDetails.getUsername());
         Specification<Program> programSpecification = new Specification<Program>() {
             @Override
             public Predicate toPredicate(Root<Program> root, CriteriaQuery<?> query, CriteriaBuilder cb) {

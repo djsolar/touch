@@ -71,7 +71,7 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     public DataTableViewPage<Program> findAllTemplate(int page, int pageSize) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findByUsername(userDetails.getUsername());
+        final User user = userRepository.findByUsername(userDetails.getUsername());
         Specification<Program> programSpecification = new Specification<Program>() {
             @Override
             public Predicate toPredicate(Root<Program> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -117,7 +117,7 @@ public class TemplateServiceImpl implements TemplateService {
             achieve.setName("其他");
             achieve.setAuthority(0);
             achieve.setCreateDate(new Date());
-            achieve.setMaterials(new HashSet<>());
+            achieve.setMaterials(new HashSet<Material>());
         }
 
         String srcPath = filePath + fileName;
